@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.project101game.controllers.ResultsController"
+            prefWidth="1920" prefHeight="1080"
+            style="-fx-background-color: #ffffff;">
+
+    <Label text="таблица результатов" layoutX="100" layoutY="50"
+           style="-fx-font-size: 36px; -fx-font-weight: bold;" />
+
+    <TableView layoutX="100" layoutY="120" prefWidth="1720" prefHeight="850">
+        <columns>
+            <TableColumn text="игрок 1"/>
+            <TableColumn text="игрок 2"/>
+            <TableColumn text="игрок 3"/>
+            <TableColumn text="игрок 4"/>
+        </columns>
+    </TableView>
+</AnchorPane>

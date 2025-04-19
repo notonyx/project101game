@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.project101game.controllers.MenuController"
+            prefWidth="1920" prefHeight="1080"
+            style="-fx-font-family: 'Prosto One';">
+
+    <ImageView fitWidth="1920" fitHeight="1080">
+        <image>
+            <Image url="@menu.png" />
+        </image>
+    </ImageView>
+    <!-- Левая часть: Заголовок "МЕНЮ" -->
+    <Label text="ИГРА 101"
+           style="-fx-font-size: 150px; -fx-font-weight: bold; -fx-text-fill: #ffffff;"
+           AnchorPane.leftAnchor="500"
+           AnchorPane.topAnchor="200"/>
+
+    <!-- Правая часть: Форма ввода -->
+    <VBox alignment="CENTER_LEFT"
+          spacing="20"
+          style="-fx-padding: 20;"
+          AnchorPane.rightAnchor="250"
+          AnchorPane.topAnchor="250"
+          AnchorPane.bottomAnchor="250">
+
+        <Label text="Код комнаты"
+               style="-fx-font-size: 28px; -fx-text-fill: white;"/>
+
+        <TextField fx:id="roomCodeField"
+                   promptText="Введите код..."
+                   style="-fx-background-color: white; -fx-font-size: 20px; -fx-padding: 8;"
+                   maxWidth="600"
+                   prefHeight="60"/>
+
+        <Button text="Присоединиться"
+                onAction="#onJoinClick"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"
+                maxWidth="600"
+                prefHeight="80"/>
+
+        <Button text="Настройки"
+                onAction="#onSettingsClick"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"
+                maxWidth="600"
+                prefHeight="80"/>
+    </VBox>
+</AnchorPane>

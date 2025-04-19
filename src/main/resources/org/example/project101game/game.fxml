@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.project101game.controllers.GameController"
+            prefWidth="1920" prefHeight="1080"
+            style="-fx-background-color: #f4f4f4;">
+
+    <HBox spacing="100" layoutX="150" layoutY="100">
+        <Label text="игрок 1"/>
+        <Label text="игрок 2"/>
+        <Label text="игрок 3"/>
+        <Label text="игрок 4"/>
+    </HBox>
+
+    <HBox layoutX="460" layoutY="600" spacing="20">
+        <Label text="[Карта]" />
+        <Label text="[Карта]" />
+        <Label text="[Карта]" />
+        <Label text="[Карта]" />
+        <Label text="[Карта]" />
+    </HBox>
+
+    <Button layoutX="1700" layoutY="50" text="выйти" onAction="#onBackClick"/>
+    <Button layoutX="1700" layoutY="100" text="настройки" onAction="#onSettingsClick"/>
+</AnchorPane>
+
