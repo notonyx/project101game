@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: rgba(104, 161, 85, 0.7);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.stoodno.stoodnogame.CreateRoomController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: rgba(104, 161, 85, 0.7);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.CreateRoomController">
    <children>
-      <Label alignment="CENTER" layoutX="101.0" layoutY="93.0" prefHeight="131.0" prefWidth="399.0" style="-fx-font-weight: bold; -fx-font-size: 35; -fx-font-family: Prosto One;" text="была создана комната под номером" textAlignment="CENTER" wrapText="true" />
+      <Label alignment="CENTER" layoutX="101.0" layoutY="93.0" prefHeight="131.0" prefWidth="399.0" style="-fx-font-weight: bold; -fx-font-size: 35; -fx-font-family: Prosto One;" text="Код комнаты" textAlignment="CENTER" wrapText="true" />
       <Label alignment="CENTER" layoutX="148.0" layoutY="231.0" prefHeight="73.0" prefWidth="305.0" style="-fx-font-size: 50; -fx-font-family: Prosto One; -fx-font-weight: bold; -fx-background-color: rgba(248, 248, 248, 1); -fx-text-fill: rgba(128, 157, 51, 1);" text="0 0 0 0" />
    </children>
 </AnchorPane>

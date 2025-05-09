@@ -1,5 +1,6 @@
 package org.example.project101game.controllers;
 
+import javafx.application.Platform;
 import org.example.project101game.SceneSwitcher;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -22,11 +23,16 @@ public class WaitingRoomController {
         roomCode = code;
     }
 
+    @FXML private Label statusLabel;
+
     @FXML
     public void initialize() {
-        roomLabel.setText("Комната #" + roomCode);
-        nameField.setText("Игрок");
-        fillAvatarGrid();
+        statusLabel.setText("Ожидание игроков...");
+    }
+
+    // Метод для обновления статуса из других потоков
+    public void updateStatus(String message) {
+        Platform.runLater(() -> statusLabel.setText(message));
     }
 
     private void fillAvatarGrid() {
