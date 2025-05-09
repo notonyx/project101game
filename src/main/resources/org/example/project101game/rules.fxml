@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.project101game.controllers.RulesController"
-            prefWidth="1920" prefHeight="1080"
-            style="-fx-background-color: #ffffff;">
+<AnchorPane prefHeight="1080"
+            prefWidth="1920"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.project101game.controllers.RulesController">
 
-    <Label text="правила игры" layoutX="100" layoutY="50"
-           style="-fx-font-size: 36px; -fx-font-weight: bold;" />
+    <ImageView fitHeight="1080" fitWidth="1920">
+        <image>
+            <Image url="@background2.jpg" />
+        </image>
+    </ImageView>
 
-    <TextArea layoutX="100" layoutY="120" style="-fx-font-size: 24px;" prefWidth="1720" prefHeight="850"
-              wrapText="true" editable="false" text="
-Каждому игроку раздается по 5 карт. В первом раунде начинающий игрок определяется рандомно (или с минимальным достоинством по начинающей масти????), в последующих начинает победитель предыдущего раунда.  Чтобы совершить ход, необходимо покрыть карту на поле либо картой такой же масти, либо такого же достоинства. Например, покрыть 5 пик можно либо пятеркой другой масти, либо любой пиковой картой, которая имеется у вас на руках.   Также у некоторых карт есть свои “бонусы”:
- “6” любой масти заставляет следующего игрока взять 2 карты из колоды и пропустить ход.
-“Туз” заставляет следующего игрока пропустить ход.
+    <Label layoutX="100" layoutY="50" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0.5, 0, 1);" text="Правила игры" textFill="WHITE" />
 
-Дама любой масти позволяет поменять масть на другую или оставить прежнюю по желанию сбросившего ее игрока. (! : если игра начинается с дамы, то обычно начинающий игрок должен загадать масть не смотря в свои карты)
+    <TextArea editable="false" layoutX="100" layoutY="120" prefHeight="850" prefWidth="1720" style="-fx-font-size: 24px;                     -fx-background-color: rgba(168, 204, 174, 0.7);                     -fx-font-family: 'Arial';                     -fx-line-spacing: 10px;                     -fx-padding: 20px;                     -fx-text-fill: #2d4d32;                     -fx-background-radius: 10;" text="Каждому игроку раздается по 5 карт. В первом раунде начинающий игрок определяется рандомно (или с минимальным достоинством по начинающей масти?), в последующих начинает победитель предыдущего раунда.  &#10;&#10;Чтобы совершить ход, необходимо покрыть карту на поле либо картой такой же масти, либо такого же достоинства. Например, покрыть 5 пик можно либо пятеркой другой масти, либо любой пиковой картой, которая имеется у вас на руках.  &#10;&#10;Особые карты: &#10;     • 6 любой масти - следующий игрок берет 2 карты и пропускает ход &#10;     • Туз - следующий игрок пропускает ход &#10;     • Дама - позволяет сменить масть (если игра начинается с дамы, игрок загадывает масть вслепую)  &#10;&#10;Подсчет очков: &#10;     • 6-10 - по номиналу &#10;     • Валет - 2 очка &#10;     • Дама - 3 очка &#10;     • Король - 4 очка &#10;     • Туз - 11 очков  &#10;&#10;Особые условия: &#10;     ✓ При завершении раунда дамой: -20 очков к общему счету &#10;     ✓ Дама пик: -40 очков &#10;     ✓ Раунд, законченный тузом/шестеркой: требуется покрытие, иначе игрок берет карты" wrapText="true" />
 
-Раунд заканчивается после того, как один из игроков избавился от всех карт на руках. Подсчитываются очки по оставшимся картах на руках у других игроков : 6-10 по достоинству, валет - 2 очка, дама - 3, король - 4, туз - 11. Стоит заметить, что если победитель раунда закончил дамой, то из его результата за всю игру вычитается 20 очков, а если это была дама пик, то -40 очков. Также если раунд был закончен тузом или шестеркой, их необходимо покрыть, то есть игрок будет вынужден взять карты из колоды.
-"/>
-    <VBox alignment="CENTER">
-        <Button text="Настройки" onAction="#onBackClick"/>
-    </VBox>
+    <Button onAction="#onBackClick" prefWidth="150" style="-fx-background-color: rgba(17, 86, 52, 1);                    -fx-text-fill: white;                    -fx-font-weight: bold;                    -fx-font-size: 23;                    -fx-background-radius: 5;" text="выйти" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20" />
+
 </AnchorPane>
-

@@ -1,30 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.project101game.controllers.GameController"
-            prefWidth="1920" prefHeight="1080"
-            style="-fx-background-color: #f4f4f4;">
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.GameController">
 
-    <HBox spacing="100" layoutX="150" layoutY="100">
-        <Label text="игрок 1"/>
-        <Label text="игрок 2"/>
-        <Label text="игрок 3"/>
-        <Label text="игрок 4"/>
+    <!-- Фоновое изображение -->
+    <ImageView fitHeight="1080.0" fitWidth="1920.0">
+        <image>
+            <Image url="@table.jpg" />
+        </image>
+    </ImageView>
+
+    <!-- Панель игроков -->
+    <HBox layoutX="150.0" layoutY="100.0" spacing="100.0" style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;">
+        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 1" />
+        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 2" />
+        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 3" />
+        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 4" />
     </HBox>
 
-    <HBox layoutX="460" layoutY="600" spacing="20">
-        <Label text="[Карта]" />
-        <Label text="[Карта]" />
-        <Label text="[Карта]" />
-        <Label text="[Карта]" />
-        <Label text="[Карта]" />
+    <!-- Панель карт -->
+    <HBox layoutX="460.0" layoutY="600.0" spacing="20.0">
+        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
+        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
+        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
+        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
+        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
     </HBox>
 
-    <Button layoutX="1700" layoutY="50" text="выйти" onAction="#onBackClick"/>
-    <Button layoutX="1700" layoutY="100" text="настройки" onAction="#onSettingsClick"/>
+    <!-- Кнопки управления -->
+    <Button layoutX="1738.0" layoutY="20.0" onAction="#onBackClick" style="-fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 23; -fx-background-radius: 5;" text="выйти" />
+
+    <Button layoutX="1550.0" layoutY="20.0" onAction="#onSettingsClick" style="-fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 23; -fx-background-radius: 5;" text="настройки" />
 </AnchorPane>
-

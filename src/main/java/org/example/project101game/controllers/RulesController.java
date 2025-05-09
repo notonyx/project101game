@@ -7,6 +7,6 @@ public class RulesController {
 
     @FXML
     protected void onBackClick() {
-        SceneSwitcher.switchTo("settings.fxml");
+        SceneSwitcher.switchTo("menu.fxml");
     }
 }

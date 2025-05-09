@@ -3,21 +3,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.project101game.controllers.ResultsController"
             prefWidth="1920" prefHeight="1080"
-            style="-fx-background-color: #ffffff;">
+            style="-fx-background-size: cover; -fx-background-repeat: no-repeat;">
 
-    <Label text="таблица результатов" layoutX="100" layoutY="50"
-           style="-fx-font-size: 36px; -fx-font-weight: bold;" />
+    <ImageView fitHeight="1080" fitWidth="1920">
+        <image>
+            <Image url="@background2.jpg" />
+        </image>
+    </ImageView>
 
-    <TableView layoutX="100" layoutY="120" prefWidth="1720" prefHeight="850">
-        <columns>
-            <TableColumn text="игрок 1"/>
-            <TableColumn text="игрок 2"/>
-            <TableColumn text="игрок 3"/>
-            <TableColumn text="игрок 4"/>
-        </columns>
-    </TableView>
+    <children>
+        <TableView layoutX="136.0" layoutY="156.0" prefHeight="870.0" prefWidth="1700.0" style="-fx-background-color: rgba(168, 204, 174, 0.7);">
+            <columns>
+                <TableColumn editable="false" />
+                <TableColumn prefWidth="405.0" style="-fx-background-color: rgba(168, 204, 174, 0.8);" text="игрок 1" />
+                <TableColumn editable="false" prefWidth="405.0" text="игрок 2" />
+                <TableColumn prefWidth="405.0" style="-fx-background-color: rgba(168, 204, 174, 0.8);" text="игрок 3" />
+                <TableColumn editable="false" prefWidth="405.0" text="игрок 4" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+        <Label layoutX="562.0" layoutY="4.0" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 80;" text="таблица результатов" />
+    </children>
 </AnchorPane>
