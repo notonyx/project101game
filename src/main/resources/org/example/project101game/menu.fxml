@@ -20,13 +20,13 @@
     </ImageView>
 
     <!-- Заголовок -->
-    <Label layoutX="136.0" layoutY="100.0" style="-fx-font-size: 70px; -fx-font-weight: bold; -fx-text-fill: white;" text="Представляем вам игру..." AnchorPane.leftAnchor="136.0" AnchorPane.topAnchor="100.0">
+    <Label layoutX="237.0" layoutY="117.0" style="-fx-font-size: 70px; -fx-font-weight: bold; -fx-text-fill: white;" text="Представляем вам игру..." AnchorPane.leftAnchor="237.0" AnchorPane.topAnchor="117.0">
         <font>
             <Font name="Prosto One" size="36.0" />
         </font></Label>
 
     <!-- Число 101 -->
-    <Label layoutX="820.0" layoutY="225.0" style="-fx-font-size: 200px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Prosto One';" text="101" AnchorPane.rightAnchor="754.0" AnchorPane.topAnchor="225.0" />
+    <Label layoutX="1383.0" layoutY="47.0" style="-fx-font-size: 200px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Prosto One';" text="101" AnchorPane.rightAnchor="213.0" AnchorPane.topAnchor="47.0" />
 
     <!-- Блок управления -->
     <VBox prefWidth="650.0" spacing="20" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="50.0">

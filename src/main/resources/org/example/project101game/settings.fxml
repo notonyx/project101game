@@ -19,8 +19,8 @@
     </ImageView>
 
     <!-- Основной контейнер -->
-    <VBox alignment="CENTER" spacing="15"
-          AnchorPane.topAnchor="50.0"
+    <VBox alignment="CENTER" spacing="20"
+          AnchorPane.topAnchor="40.0"
           AnchorPane.leftAnchor="50.0"
           AnchorPane.rightAnchor="50.0">
 
@@ -28,21 +28,23 @@
         <Label text="настройки"
                style="-fx-font-size: 28px; -fx-font-family: 'Prosto One'; -fx-text-fill: rgba(8, 75, 43, 1); -fx-font-weight: bold;"/>
 
-        <!-- Настройки звука -->
-        <VBox alignment="CENTER_LEFT" spacing="10" prefWidth="400.0">
-            <!-- Чекбокс и кнопка смены музыки -->
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <CheckBox fx:id="musicCheckBox"
-                          text="музыка"
-                          style="-fx-font-size: 14px; -fx-text-fill: rgba(8, 75, 43, 1);"/>
+        <!-- Блок управления музыкой -->
+        <VBox alignment="CENTER" spacing="10" prefWidth="300.0">
+            <CheckBox fx:id="musicCheckBox"
+                      text="музыка"
+                      style="-fx-font-size: 18px; -fx-text-fill: rgba(8, 75, 43, 1);"/>
 
-                <Button text="смена музыки"
-                        onAction="#onMusicSwap"
-                        style="-fx-font-size: 12px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"
-                        prefWidth="150.0"/>
-            </HBox>
+            <Button text="смена музыки"
+                    onAction="#onMusicSwap"
+                    style="-fx-font-size: 16px;
+                           -fx-background-color: rgba(17, 86, 52, 1);
+                           -fx-text-fill: white;
+                           -fx-pref-width: 200;"
+            />
+        </VBox>
 
-            <!-- Слайдер громкости -->
+        <!-- Слайдер громкости -->
+        <VBox alignment="CENTER" spacing="5" prefWidth="300.0">
             <Label text="громкость"
                    style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: rgba(8, 75, 43, 1);"/>
             <Slider fx:id="volumeSlider"
@@ -56,19 +58,101 @@
                    style="-fx-background-color: rgba(17, 86, 52, 1);"/>
 
         <!-- Кнопки управления -->
-        <Button text="правила игры"
-                onAction="#onRulesClick"
-                style="-fx-font-size: 14px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"
-                prefWidth="250.0"/>
+        <VBox alignment="CENTER" spacing="15" prefWidth="250.0">
+            <Button text="правила игры"
+                    onAction="#onRulesClick"
+                    style="-fx-font-size: 16px;
+                           -fx-background-color: rgba(17, 86, 52, 1);
+                           -fx-text-fill: white;
+                           -fx-pref-width: 250;"/>
 
-        <Button text="разработчики 😎"
-                onAction="#onDevelopersClick"
-                style="-fx-font-size: 14px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"
-                prefWidth="250.0"/>
+            <Button text="разработчики 😎"
+                    onAction="#onDevelopersClick"
+                    style="-fx-font-size: 16px;
+                           -fx-background-color: rgba(17, 86, 52, 1);
+                           -fx-text-fill: white;
+                           -fx-pref-width: 250;"/>
 
-        <Button text="в меню"
-                onAction="#onBackClick"
-                style="-fx-font-size: 14px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"
-                prefWidth="250.0"/>
+            <Button text="закрыть"
+                    onAction="#onBackClick"
+                    style="-fx-font-size: 16px;
+                           -fx-background-color: rgba(17, 86, 52, 1);
+                           -fx-text-fill: white;
+                           -fx-pref-width: 250;"/>
+        </VBox>
     </VBox>
 </AnchorPane>
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+
+<!--<?import javafx.geometry.Insets?>-->
+<!--<?import javafx.scene.control.*?>-->
+<!--<?import javafx.scene.layout.*?>-->
+<!--<?import javafx.scene.image.Image?>-->
+<!--<?import javafx.scene.image.ImageView?>-->
+
+<!--<AnchorPane xmlns="http://javafx.com/javafx"-->
+<!--            xmlns:fx="http://javafx.com/fxml"-->
+<!--            fx:controller="org.example.project101game.controllers.SettingsController"-->
+<!--            prefWidth="500.0" prefHeight="600.0">-->
+
+<!--    &lt;!&ndash; Фоновая картинка &ndash;&gt;-->
+<!--    <ImageView fitWidth="500.0" fitHeight="600.0">-->
+<!--        <image>-->
+<!--            <Image url="@sun2.jpg" />-->
+<!--        </image>-->
+<!--    </ImageView>-->
+
+<!--    &lt;!&ndash; Основной контейнер &ndash;&gt;-->
+<!--    <VBox alignment="CENTER" spacing="15"-->
+<!--          AnchorPane.topAnchor="50.0"-->
+<!--          AnchorPane.leftAnchor="50.0"-->
+<!--          AnchorPane.rightAnchor="50.0">-->
+
+<!--        &lt;!&ndash; Заголовок &ndash;&gt;-->
+<!--        <Label text="настройки"-->
+<!--               style="-fx-font-size: 28px; -fx-font-family: 'Prosto One'; -fx-text-fill: rgba(8, 75, 43, 1); -fx-font-weight: bold;"/>-->
+
+<!--        &lt;!&ndash; Настройки звука &ndash;&gt;-->
+<!--        <VBox alignment="CENTER_LEFT" spacing="10" prefWidth="400.0">-->
+<!--            &lt;!&ndash; Чекбокс и кнопка смены музыки &ndash;&gt;-->
+<!--            <HBox spacing="15" alignment="CENTER_LEFT">-->
+<!--                <CheckBox fx:id="musicCheckBox"-->
+<!--                          text="музыка"-->
+<!--                          style="-fx-font-size: 14px; -fx-text-fill: rgba(8, 75, 43, 1);"/>-->
+
+<!--                <Button text="смена музыки"-->
+<!--                        onAction="#onMusicSwap"-->
+<!--                        style="-fx-font-size: 12px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"-->
+<!--                        prefWidth="150.0"/>-->
+<!--            </HBox>-->
+
+<!--            &lt;!&ndash; Слайдер громкости &ndash;&gt;-->
+<!--            <Label text="громкость"-->
+<!--                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: rgba(8, 75, 43, 1);"/>-->
+<!--            <Slider fx:id="volumeSlider"-->
+<!--                    prefWidth="250.0"-->
+<!--                    showTickMarks="true"/>-->
+<!--        </VBox>-->
+
+<!--        &lt;!&ndash; Дополнительные настройки &ndash;&gt;-->
+<!--        <ChoiceBox fx:id="themeChoice"-->
+<!--                   prefWidth="250.0"-->
+<!--                   style="-fx-background-color: rgba(17, 86, 52, 1);"/>-->
+
+<!--        &lt;!&ndash; Кнопки управления &ndash;&gt;-->
+<!--        <Button text="правила игры"-->
+<!--                onAction="#onRulesClick"-->
+<!--                style="-fx-font-size: 14px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"-->
+<!--                prefWidth="250.0"/>-->
+
+<!--        <Button text="разработчики 😎"-->
+<!--                onAction="#onDevelopersClick"-->
+<!--                style="-fx-font-size: 14px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"-->
+<!--                prefWidth="250.0"/>-->
+
+<!--        <Button text="закрыть"-->
+<!--                onAction="#onBackClick"-->
+<!--                style="-fx-font-size: 14px; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;"-->
+<!--                prefWidth="250.0"/>-->
+<!--    </VBox>-->
+<!--</AnchorPane>-->

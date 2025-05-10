@@ -6,23 +6,26 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080"
-            prefWidth="1920"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.project101game.controllers.RulesController">
+<AnchorPane prefHeight="800" prefWidth="1000" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.RulesController">
 
-    <ImageView fitHeight="1080" fitWidth="1920">
+    <ImageView fitHeight="800" fitWidth="1000">
         <image>
             <Image url="@background2.jpg" />
         </image>
     </ImageView>
 
-    <Label layoutX="100" layoutY="50" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0.5, 0, 1);" text="Правила игры" textFill="WHITE" />
+    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
 
-    <TextArea editable="false" layoutX="100" layoutY="120" prefHeight="850" prefWidth="1720" style="-fx-font-size: 24px;                     -fx-background-color: rgba(168, 204, 174, 0.7);                     -fx-font-family: 'Arial';                     -fx-line-spacing: 10px;                     -fx-padding: 20px;                     -fx-text-fill: #2d4d32;                     -fx-background-radius: 10;" text="Каждому игроку раздается по 5 карт. В первом раунде начинающий игрок определяется рандомно (или с минимальным достоинством по начинающей масти?), в последующих начинает победитель предыдущего раунда.  &#10;&#10;Чтобы совершить ход, необходимо покрыть карту на поле либо картой такой же масти, либо такого же достоинства. Например, покрыть 5 пик можно либо пятеркой другой масти, либо любой пиковой картой, которая имеется у вас на руках.  &#10;&#10;Особые карты: &#10;     • 6 любой масти - следующий игрок берет 2 карты и пропускает ход &#10;     • Туз - следующий игрок пропускает ход &#10;     • Дама - позволяет сменить масть (если игра начинается с дамы, игрок загадывает масть вслепую)  &#10;&#10;Подсчет очков: &#10;     • 6-10 - по номиналу &#10;     • Валет - 2 очка &#10;     • Дама - 3 очка &#10;     • Король - 4 очка &#10;     • Туз - 11 очков  &#10;&#10;Особые условия: &#10;     ✓ При завершении раунда дамой: -20 очков к общему счету &#10;     ✓ Дама пик: -40 очков &#10;     ✓ Раунд, законченный тузом/шестеркой: требуется покрытие, иначе игрок берет карты" wrapText="true" />
+        <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0.5, 0, 1;" text="правила игры" textFill="WHITE">
+         <font>
+            <Font size="35.0" />
+         </font></Label>
 
-    <Button onAction="#onBackClick" prefWidth="150" style="-fx-background-color: rgba(17, 86, 52, 1);                    -fx-text-fill: white;                    -fx-font-weight: bold;                    -fx-font-size: 23;                    -fx-background-radius: 5;" text="выйти" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20" />
+        <TextArea editable="false" prefHeight="600.0" prefWidth="960.0" style="-fx-font-size: 18px;                         -fx-background-color: rgba(168, 204, 174, 0.7);                         -fx-font-family: 'Arial';                         -fx-line-spacing: 8px;                         -fx-padding: 15px;                         -fx-text-fill: #2d4d32;                         -fx-background-radius: 10;" text="Каждому игроку раздается по 5 карт. В первом раунде начинающий игрок определяется рандомно (или с минимальным достоинством по начинающей масти?), в последующих начинает победитель предыдущего раунда. &#10;&#10;Чтобы совершить ход, необходимо покрыть карту на поле либо картой такой же масти, либо такого же достоинства. Например, покрыть 5 пик можно либо пятеркой другой масти, либо любой пиковой картой, которая имеется у вас на руках. &#10;&#10;Особые карты: &#10;     • 6 любой масти - следующий игрок берет 2 карты и пропускает ход &#10;     • Туз - следующий игрок пропускает ход &#10;     • Дама - позволяет сменить масть (если игра начинается с дамы, игрок загадывает масть вслепую) &#10;&#10;Подсчет очков: &#10;     • 6-10 - по номиналу &#10;     • Валет - 2 очка &#10;     • Дама - 3 очка &#10;     • Король - 4 очка &#10;     • Туз - 11 очков &#10;&#10;Особые условия: &#10;     ✓ При завершении раунда дамой: -20 очков к общему счету &#10;     ✓ Дама пик: -40 очков &#10;     ✓ Раунд, законченный тузом/шестеркой: требуется покрытие, иначе игрок берет карты&#10;" wrapText="true" />
+    </VBox>
 
+     <Button layoutX="440.0" layoutY="707.0" onAction="#onBackClick" style="-fx-background-color: rgba(17, 86, 52, 1);                        -fx-text-fill: white;                        -fx-font-weight: bold;                        -fx-font-size: 20px;                        -fx-background-radius: 5;                        -fx-pref-width: 120;" text="закрыть" />
 </AnchorPane>

@@ -1,23 +1,50 @@
 package org.example.project101game.controllers;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import org.example.project101game.GameClient;
 import org.example.project101game.GameServer;
 import org.example.project101game.SceneSwitcher;
 import javafx.fxml.FXML;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
+import java.io.IOException;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
 
 
 
 public class MenuController {
 
-    @FXML private TextField ipPortField; // Поле для IP хоста
+    @FXML
+    private TextField ipPortField; // Поле для IP хоста
 
 
     @FXML
-    protected void onSettingsClick() {
-        SceneSwitcher.switchTo("settings.fxml");
+    private void onSettingsClick(ActionEvent event) {
+        try {
+            // Загрузка FXML настроек
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/settings.fxml"));
+            Parent root = loader.load();
+
+            // Создание нового окна
+            Stage settingsStage = new Stage();
+            settingsStage.setTitle("Настройки");
+            settingsStage.initModality(Modality.APPLICATION_MODAL);
+            settingsStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+
+            // Установка размеров
+            settingsStage.setScene(new Scene(root, 500, 600));
+            settingsStage.setResizable(false);
+            settingsStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -20,6 +20,8 @@ public class GameServer extends Thread {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println("Новый клиент подключен с IP: " +
+                        clientSocket.getInetAddress() + ", порт: " + clientSocket.getPort());
                 ClientHandler client = new ClientHandler(clientSocket, this);
                 clients.add(client);
                 client.start();

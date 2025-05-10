@@ -25,33 +25,6 @@ public class WaitingRoomController {
         roomCode = code;
     }
 
-//    @FXML
-//    public void initialize() {
-//        roomLabel.setText("Комната #" + roomCode);
-//        nameField.setText("Игрок");
-//        fillAvatarGrid();
-//    }
-//
-//    private void fillAvatarGrid() {
-//        avatarGrid.getChildren().clear();
-//        for (int i = 0; i < 9; i++) {
-//            Circle avatar = new Circle(25, Color.LIGHTBLUE);
-//            avatarGrid.add(avatar, i % 3, i / 3);
-//        }
-//    }
-//
-//    @FXML
-//    private void handleRandom() {
-//        String[] names = {"Лис", "Котик", "Панда", "Ёжик", "Сова"};
-//        String name = names[(int) (Math.random() * names.length)];
-//        nameField.setText(name);
-//    }
-//
-//    @FXML
-//    private void handleContinue() {
-//        readyLabel.setText("1 игрок готов"); // Заглушка
-//    }
-
     @FXML
     protected void onRenameClick() {
         // логика смены имени игрока
