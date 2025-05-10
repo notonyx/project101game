@@ -10,11 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0"
-            xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.project101game.controllers.MenuController">
-       <!-- Фоновое изображение -->
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.MenuController">
+
+    <!-- Фоновое изображение -->
     <ImageView fitHeight="1080" fitWidth="1920">
         <image>
             <Image url="@menu.png" />
@@ -23,18 +21,18 @@
 
     <!-- Заголовок -->
     <Label layoutX="136.0" layoutY="100.0" style="-fx-font-size: 70px; -fx-font-weight: bold; -fx-text-fill: white;" text="Представляем вам игру..." AnchorPane.leftAnchor="136.0" AnchorPane.topAnchor="100.0">
-      <font>
-         <Font name="Prosto One" size="36.0" />
-      </font></Label>
+        <font>
+            <Font name="Prosto One" size="36.0" />
+        </font></Label>
 
     <!-- Число 101 -->
-    <Label layoutX="1396.0" layoutY="40.0" style="-fx-font-size: 200px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Prosto One';" text="101" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="40.0" />
+    <Label layoutX="820.0" layoutY="225.0" style="-fx-font-size: 200px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Prosto One';" text="101" AnchorPane.rightAnchor="754.0" AnchorPane.topAnchor="225.0" />
 
     <!-- Блок управления -->
     <VBox prefWidth="650.0" spacing="20" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="50.0">
 
         <!-- Поле ввода кода комнаты -->
-        <TextField fx:id="roomCodeField" onAction="#onJoinClick" prefHeight="110.0" prefWidth="650.0" promptText="код комнаты #" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(244, 244, 244, 1);">
+        <TextField fx:id="ipPortField" onAction="#onJoinClick" prefHeight="110.0" prefWidth="650.0" promptText="ip-адрес:порт" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(244, 244, 244, 1);">
             <VBox.margin>
                 <Insets bottom="30.0" />
             </VBox.margin>
@@ -53,7 +51,7 @@
                 <Insets bottom="30.0" />
             </VBox.margin>
         </Button>
-   
+
         <!-- Кнопка настроек -->
         <Button onAction="#onSettingsClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="настройки">
             <VBox.margin>
