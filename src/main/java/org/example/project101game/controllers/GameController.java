@@ -27,7 +27,12 @@ import javafx.scene.text.Font;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import org.example.project101game.models.Card;
+import org.example.project101game.models.Rank;
+import org.example.project101game.models.Suit;
 
 public class GameController {
 
@@ -38,9 +43,11 @@ public class GameController {
     @FXML private Circle opponent1Avatar, opponent2Avatar, opponent3Avatar;
     @FXML private Label opponent1Cards, opponent2Cards, opponent3Cards;
 
-    private List<Image> playerCards = new ArrayList<>();
     private int currentPage = 0;
     private static final int CARDS_PER_PAGE = 9;
+    private List<Card> deck = new ArrayList<>();
+    private List<Card> playerHandCards = new ArrayList<>();
+    private List<Card> discardPile = new ArrayList<>();
 
     @FXML
     protected void onBackClick() {
@@ -101,60 +108,116 @@ public class GameController {
     }
 
     private Image createTextCardImage(int cardNumber) {
-    int width = 80;
-    int height = 120;
-    WritableImage image = new WritableImage(width, height);
-    PixelWriter writer = image.getPixelWriter();
+        int width = 80;
+        int height = 120;
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter writer = image.getPixelWriter();
 
-    // Заполняем фон карты (чередуем цвета для наглядности)
-    Color bgColor = Color.hsb((cardNumber * 10) % 360, 0.3, 0.9);
-    for (int y = 0; y < height; y++) {
+        // Заполняем фон карты (чередуем цвета для наглядности)
+        Color bgColor = Color.hsb((cardNumber * 10) % 360, 0.3, 0.9);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                writer.setColor(x, y, bgColor);
+            }
+        }
+
+        // Добавляем обводку
+        for (int y = 0; y < height; y++) {
+            writer.setColor(0, y, Color.BLACK);
+            writer.setColor(width-1, y, Color.BLACK);
+        }
         for (int x = 0; x < width; x++) {
-            writer.setColor(x, y, bgColor);
+            writer.setColor(x, 0, Color.BLACK);
+            writer.setColor(x, height-1, Color.BLACK);
+        }
+
+        // Добавляем текст (номер карты) в центр
+        Canvas canvas = new Canvas(width, height);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.BLACK);
+        gc.setFont(Font.font(18));
+        gc.fillText(String.valueOf(cardNumber), width/2 - 5, height/2 + 5);
+
+        // Конвертируем Canvas в Image
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        return canvas.snapshot(params, null);
+    }
+
+    private Image createCardPlaceholder(Suit suit, Rank rank) {
+        int width = 80;
+        int height = 120;
+        Canvas canvas = new Canvas(width, height);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Фон зависит от масти
+        Color bgColor = switch (suit) {
+            case HEARTS, DIAMONDS -> Color.LIGHTPINK;
+            case CLUBS, SPADES -> Color.LIGHTGRAY;
+        };
+
+        gc.setFill(bgColor);
+        gc.fillRect(0, 0, width, height);
+
+        // Текст карты
+        gc.setFill(Color.BLACK);
+        gc.setFont(Font.font(14));
+        gc.fillText(rank.toString(), 10, 20);
+        gc.fillText(suit.toString(), 10, 40);
+
+        return canvas.snapshot(null, null);
+    }
+
+//    private Image createBackPlaceholder() {
+//        int width = 80;
+//        int height = 120;
+//        Canvas canvas = new Canvas(width, height);
+//        GraphicsContext gc = canvas.getGraphicsContext2D();
+//        gc.setFill(Color.DARKBLUE);
+//        gc.fillRect(0, 0, width, height);
+//        return canvas.snapshot(null, null);
+//    }
+
+    private void initializeDeck() {
+        deck = new ArrayList<>(); // Инициализируем колоду
+
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                try {
+                    String path = String.format("/org/example/project101game/cards/%s/%s.png",
+                        suit.name().toLowerCase(),
+                        rank.getFileName()); // Используем getFileName()
+                    Image image = new Image(getClass().getResourceAsStream(path));
+                    deck.add(new Card(suit, rank, image));
+                } catch (Exception e) {
+                    System.err.println("Не удалось загрузить карту: " + suit + "_" + rank);
+                    // Создаем placeholder
+                    Image placeholder = createCardPlaceholder(suit, rank);
+                    deck.add(new Card(suit, rank, placeholder));
+                }
+            }
+        }
+
+        Collections.shuffle(deck); // Перемешиваем колоду
+
+        // Загружаем рубашку
+        try {
+            Image backImage = new Image(getClass().getResourceAsStream("/org/example/project101game/cards/card_back.png"));
+            deckView.setImage(backImage);
+        } catch (Exception e) {
+            System.err.println("Не удалось загрузить рубашку карты");
+            //deckView.setImage(createBackPlaceholder());
         }
     }
 
-    // Добавляем обводку
-    for (int y = 0; y < height; y++) {
-        writer.setColor(0, y, Color.BLACK);
-        writer.setColor(width-1, y, Color.BLACK);
-    }
-    for (int x = 0; x < width; x++) {
-        writer.setColor(x, 0, Color.BLACK);
-        writer.setColor(x, height-1, Color.BLACK);
-    }
-
-    // Добавляем текст (номер карты) в центр
-    Canvas canvas = new Canvas(width, height);
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-    gc.setFill(Color.BLACK);
-    gc.setFont(Font.font(18));
-    gc.fillText(String.valueOf(cardNumber), width/2 - 5, height/2 + 5);
-
-    // Конвертируем Canvas в Image
-    SnapshotParameters params = new SnapshotParameters();
-    params.setFill(Color.TRANSPARENT);
-    return canvas.snapshot(params, null);
-}
-
     private void initTestData() {
-        // Загрузка тестовых карт (в реальной игре это будет логика раздачи)
-//        for (int i = 1; i <= 36; i++) {
-//            try {
-//                Image card = new Image(getClass().getResourceAsStream("/org/example/project101game/cards/card_" + i + ".png"));
-//                playerCards.add(card);
-//            } catch (Exception e) {
-//                System.err.println("Не удалось загрузить карту " + i);
-//            }
-//        }
+        initializeDeck(); // Инициализируем колоду
 
-        playerCards.clear(); // Очищаем список карт
-
-        // Создаем 36 тестовых карт с номерами вместо изображений
-        for (int i = 1; i <= 36; i++) {
-            // Создаем простую карту как цветной прямоугольник с текстом
-            Image placeholderCard = createTextCardImage(i);
-            playerCards.add(placeholderCard);
+        // Раздаем начальные карты игроку
+        for (int i = 0; i < 6; i++) { // Раздаем 6 карт
+            if (!deck.isEmpty()) {
+                playerHandCards.add(deck.remove(0));
+            }
         }
 
         // Установка количества карт у противников
@@ -163,8 +226,10 @@ public class GameController {
         opponent3Cards.setText("3");
 
         // Установка первой карты в сброс
-        if (!playerCards.isEmpty()) {
-            discardPileView.setImage(playerCards.get(0));
+        if (!deck.isEmpty()) {
+            Card firstCard = deck.remove(0);
+            discardPile.add(firstCard);
+            discardPileView.setImage(firstCard.getImage());
         }
     }
 
@@ -172,44 +237,59 @@ public class GameController {
         playerHand.getChildren().clear();
 
         int startIndex = currentPage * CARDS_PER_PAGE;
-        int endIndex = Math.min(startIndex + CARDS_PER_PAGE, playerCards.size());
+        int endIndex = Math.min(startIndex + CARDS_PER_PAGE, playerHandCards.size());
 
         for (int i = startIndex; i < endIndex; i++) {
-            ImageView cardView = new ImageView(playerCards.get(i));
-            cardView.setFitWidth(80);
-            cardView.setFitHeight(120);
+            Card card = playerHandCards.get(i);
+            ImageView cardView = new ImageView(card.getImage());
+            cardView.setFitWidth(120);
+            cardView.setFitHeight(180);
 
-            // Создаем финальную копию переменной для использования в лямбде
             final int cardIndex = i;
-            cardView.setOnMouseClicked(event -> onCardClick(cardView, cardIndex));
+            cardView.setOnMouseClicked(event -> {
+                // Играем карту - перемещаем в сброс
+                Card playedCard = playerHandCards.remove(cardIndex);
+                discardPile.add(playedCard);
+                discardPileView.setImage(playedCard.getImage());
+                showPlayerCardsPage();
+            });
 
             playerHand.getChildren().add(cardView);
         }
     }
 
     private void onCardClick(ImageView cardView, int cardIndex) {
-        // Логика игры карты
         System.out.println("Играем карту #" + cardIndex);
         discardPileView.setImage(cardView.getImage());
-        playerCards.remove(cardIndex);
+        playerHandCards.remove(cardIndex);
         showPlayerCardsPage();
     }
 
     @FXML
     private void onChangeCardsClick() {
-        // Переключение между страницами карт
-        int maxPages = (int) Math.ceil((double) playerCards.size() / CARDS_PER_PAGE);
+        int maxPages = (int) Math.ceil((double) playerHandCards.size() / CARDS_PER_PAGE);
         currentPage = (currentPage + 1) % maxPages;
         showPlayerCardsPage();
     }
 
     @FXML
     private void onDeckClick() {
-        // Взятие карты из колоды
-        if (!playerCards.isEmpty()) {
-            Image newCard = playerCards.get(0); // В реальной игре - случайная карта
-            playerCards.add(newCard);
+        if (!deck.isEmpty()) {
+            // Берем верхнюю карту
+            Card drawnCard = deck.remove(0);
+            playerHandCards.add(drawnCard);
+
+            // Обновляем отображение
             showPlayerCardsPage();
+
+            // Если колода пуста, скрываем ее
+            if (deck.isEmpty()) {
+                deckView.setVisible(false);
+            }
+
+            System.out.println("Взята карта: " + drawnCard);
+        } else {
+            System.out.println("Колода пуста!");
         }
     }
 

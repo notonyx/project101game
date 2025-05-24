@@ -26,7 +26,7 @@
         </StackPane>
 
 
-    <VBox alignment="CENTER" layoutX="88.0" layoutY="850.0" prefHeight="198.0" prefWidth="1743.0" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(87, 134, 94, 0.7);">
+    <VBox alignment="CENTER" layoutX="186.0" layoutY="810.0" prefHeight="214.0" prefWidth="1569.0" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(87, 134, 94, 0.7);">
            <!-- Рука игрока -->
         <HBox fx:id="playerHand" alignment="CENTER" spacing="10" />
     </VBox>
@@ -46,13 +46,13 @@
               <!-- Сброс (последняя сыгранная карта) -->
               <VBox alignment="CENTER" prefHeight="361.0" prefWidth="206.0" spacing="10">
                   <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Сброс" />
-                  <ImageView fx:id="discardPileView" fitHeight="120" fitWidth="80" />
+                  <ImageView fx:id="discardPileView" fitHeight="300.0" fitWidth="198.0" />
               </VBox>
           </HBox>
           <!-- Противники (верхний ряд) -->
           <HBox alignment="CENTER" layoutX="1684.0" layoutY="479.0" spacing="50" />
-     <Button layoutX="14.0" layoutY="15.0" onAction="#onBackClick" prefHeight="48.0" prefWidth="142.0" style="-fx-font-size: 16; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;" text="Выйти" />
-     <Button alignment="CENTER" contentDisplay="CENTER" layoutX="1755.0" layoutY="15.0" onAction="#onSettingsClick" prefHeight="48.0" prefWidth="154.0" style="-fx-font-size: 16; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;" text="Настройки" textAlignment="CENTER" />
+     <Button layoutX="14.0" layoutY="15.0" onAction="#onBackClick" prefHeight="48.0" prefWidth="142.0" style="-fx-font-size: 22; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="выйти" />
+     <Button alignment="CENTER" contentDisplay="CENTER" layoutX="1755.0" layoutY="15.0" onAction="#onSettingsClick" prefHeight="48.0" prefWidth="154.0" style="-fx-font-size: 22; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="настройки" textAlignment="CENTER" />
            <VBox fx:id="opponent1Box" alignment="CENTER" layoutX="61.0" layoutY="339.0" prefHeight="320.0" prefWidth="222.0" spacing="5">
                <Circle fx:id="opponent1Avatar" fill="WHITE" radius="30" />
                <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 1" />
@@ -66,7 +66,7 @@
            </VBox>
 
          <!-- Кнопка смены страницы карт -->
-     <Button layoutX="1694.0" layoutY="740.0" onAction="#onChangeCardsClick" prefHeight="58.0" prefWidth="140.0" style="-fx-font-size: 16; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white;" text="Сменить" />
+     <Button layoutX="1694.0" layoutY="740.0" onAction="#onChangeCardsClick" prefHeight="58.0" prefWidth="140.0" style="-fx-font-size: 23; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="cменить" />
 
               <VBox fx:id="opponent3Box" alignment="CENTER" layoutX="1590.0" layoutY="364.0" prefHeight="308.0" prefWidth="202.0" spacing="5">
                <Circle fx:id="opponent3Avatar" fill="WHITE" radius="30.0" />
