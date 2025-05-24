@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="1080.0" prefWidth="1920.0"
-            xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.project101game.controllers.WaitingRoomController">
+<BorderPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.WaitingRoomController">
 
     <!-- Фоновое изображение -->
-    <ImageView fitWidth="1920" fitHeight="1080">
+    <ImageView fitHeight="1080" fitWidth="1920">
         <image>
             <Image url="@background2.jpg" />
         </image>
@@ -21,73 +28,77 @@
 
     <top>
         <HBox alignment="CENTER" style="-fx-padding: 40 0 0 0;">
-            <Label fx:id="roomLabel"
-                   text="комната #0000"
-                   style="-fx-font-size: 35px; -fx-background-color: #F8F8F8; -fx-padding: 5 15 5 15; -fx-font-weight: bold; -fx-text-fill: #809d33; -fx-background-radius: 10;"/>
+            <Label fx:id="roomLabel" style="-fx-font-size: 35px; -fx-background-color: #F8F8F8; -fx-padding: 5 15 5 15; -fx-font-weight: bold; -fx-text-fill: #809d33; -fx-background-radius: 10;" text="комната #0000">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin></Label>
         </HBox>
     </top>
 
     <left>
-        <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 100 20 0 20;">
-            <Circle fx:id="avatarCircle" radius="150" fill="WHITE"/>
+        <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="500.0" spacing="20" style="-fx-padding: 100 20 0 20;" BorderPane.alignment="CENTER">
+            <Circle fx:id="avatarCircle" fill="WHITE" radius="150">
+            <VBox.margin>
+               <Insets bottom="30.0" />
+            </VBox.margin></Circle>
 
-            <TextField fx:id="nameField"
-                       promptText="имя игрока"
-                       style="-fx-font-size: 25px; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 65;"
-                       alignment="CENTER"/>
+            <TextField fx:id="nameField" alignment="CENTER" promptText="имя игрока" style="-fx-font-size: 25px; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 65;">
+            <VBox.margin>
+               <Insets bottom="20.0" />
+            </VBox.margin>
+            <font>
+               <Font size="14.0" />
+            </font></TextField>
 
-            <Button fx:id="randomButton"
-                    text="рандом"
-                    style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;"/>
+            <Button fx:id="randomButton" style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;" text="рандом" />
 
-            <Button fx:id="continueButton"
-                    text="продолжить"
-                    onAction="#onStartClick"
-                    style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;"/>
+            <Button fx:id="continueButton" onAction="#onStartClick" style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;" text="продолжить" />
+         <BorderPane.margin>
+            <Insets left="100.0" />
+         </BorderPane.margin>
         </VBox>
     </left>
 
     <center>
-        <GridPane fx:id="avatarGrid"
-                  alignment="CENTER"
-                  hgap="40"
-                  vgap="40"
-                  style="-fx-background-color: rgba(87, 134, 94, 0.7); -fx-padding: 10; -fx-background-radius: 15;">
+        <GridPane fx:id="avatarGrid" alignment="CENTER" hgap="30.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="776.0" prefWidth="944.0" style="-fx-background-color: rgba(87, 134, 94, 0.7); -fx-padding: 10; -fx-background-radius: 15;" vgap="20.0" BorderPane.alignment="CENTER">
 
             <columnConstraints>
-                <ColumnConstraints prefWidth="250"/>
-                <ColumnConstraints prefWidth="250"/>
-                <ColumnConstraints prefWidth="250"/>
+                <ColumnConstraints prefWidth="250" />
+                <ColumnConstraints prefWidth="250" />
+                <ColumnConstraints prefWidth="250" />
             </columnConstraints>
 
             <rowConstraints>
-                <RowConstraints prefHeight="250"/>
-                <RowConstraints prefHeight="250"/>
-                <RowConstraints prefHeight="250"/>
+                <RowConstraints prefHeight="250.0" />
+                <RowConstraints prefHeight="250.0" />
+                <RowConstraints prefHeight="250.0" />
             </rowConstraints>
 
             <!-- Аватары игроков -->
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-            <Circle fill="WHITE" radius="105" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Circle fill="WHITE" radius="105.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+         <BorderPane.margin>
+            <Insets top="50.0" />
+         </BorderPane.margin>
+         <rotationAxis>
+            <Point3D />
+         </rotationAxis>
         </GridPane>
     </center>
 
     <bottom>
         <AnchorPane>
             <VBox alignment="BOTTOM_RIGHT" spacing="0" AnchorPane.bottomAnchor="10" AnchorPane.rightAnchor="10">
-                <Label text="ЖДУТ"
-                       style="-fx-font-size: 34px; -fx-background-color: rgba(126, 175, 168, 1); -fx-padding: 5 10 5 10; -fx-font-weight: bold; -fx-background-radius: 10 10 0 0;"/>
+                <Label style="-fx-font-size: 34px; -fx-background-color: rgba(126, 175, 168, 1); -fx-padding: 5 10 5 10; -fx-font-weight: bold; -fx-background-radius: 10 10 0 0;" text="ЖДУТ" />
 
-                <Label fx:id="readyLabel"
-                       text="2 / 4"
-                       style="-fx-font-size: 30px; -fx-background-color: white; -fx-padding: 5 10 5 10; -fx-text-fill: #7eafa8; -fx-background-radius: 0 0 10 10; -fx-font-weight: bold;"/>
+                <Label fx:id="readyLabel" alignment="CENTER" prefHeight="55.0" prefWidth="121.0" style="-fx-font-size: 30px; -fx-background-color: white; -fx-padding: 5 10 5 10; -fx-text-fill: #7eafa8; -fx-background-radius: 0 0 10 10; -fx-font-weight: bold;" text="2 / 4" />
             </VBox>
         </AnchorPane>
     </bottom>
