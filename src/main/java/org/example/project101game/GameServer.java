@@ -109,6 +109,11 @@ public class GameServer extends Thread {
                         System.out.println("Игрок готов: " + socket.getInetAddress());
                         server.checkAllReady();
                     }
+                    else if ("PLAYER_NOT_READY".equals(message)) {
+                        setReady(false);
+                        System.out.println("Игрок НЕ готов: " + socket.getInetAddress());
+                        server.checkAllReady();
+                    }
                 }
 
             } catch (IOException e) {

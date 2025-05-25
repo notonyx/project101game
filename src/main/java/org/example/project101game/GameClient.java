@@ -34,10 +34,22 @@ public class GameClient {
         }
     }
 
+    public void sendNotReady() {
+        try {
+            out.writeUTF("PLAYER_NOT_READY");
+            out.flush();
+            System.out.println("Я НЕ ГОТОВ - отправил серверу");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void sendReady() {
         try {
             out.writeUTF("PLAYER_READY");
             out.flush();
+            System.out.println("Я ГОТОВ - отправил серверу");
         } catch (IOException e) {
             e.printStackTrace();
         }
