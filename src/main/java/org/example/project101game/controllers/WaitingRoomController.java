@@ -97,20 +97,26 @@ public class WaitingRoomController {
         if (isReady) {
             readyButton.setText("Готов");
             readyButton.setStyle("-fx-background-color: rgba(80, 200, 120, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;");
+            if (isHost) {
+                if (gameServer != null) {
+                    gameServer.setHostReady(true);
+                }
+            } else {
+                gameClient.sendReady();
+            }
         } else {
             readyButton.setText("Не готов");
             readyButton.setStyle("-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;");
-        }
-
-        if (isHost) {
-            // Хост помечает себя готовым на стороне сервера напрямую
-            if (gameServer != null) {
-                gameServer.setHostReady(true); // Этот метод ты добавил ранее
+            if (isHost) {
+                if (gameServer != null) {
+                    gameServer.setHostReady(false);
+                }
+            } else {
+                gameClient.sendNotReady();
             }
-        } else {
-                gameClient.sendReady(); // метод нужно реализовать в GameClient
         }
     }
+
 
 
     private void loadAvatarImages() {
