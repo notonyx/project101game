@@ -1,4 +1,5 @@
 package org.example.project101game;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -7,6 +8,7 @@ public class GameServer extends Thread {
     private ServerSocket serverSocket;
     private int port;
     private List<ClientHandler> clients = new ArrayList<>();
+    private boolean hostReady = false; // Хост как игрок
 
     public GameServer(int port) {
         this.port = port;
@@ -31,12 +33,59 @@ public class GameServer extends Thread {
         }
     }
 
+    // Вызывается из интерфейса хоста при нажатии на кнопку "Готов"
+    public synchronized void setHostReady(boolean ready) {
+        this.hostReady = ready;
+        System.out.println("Хост готов: " + ready);
+        checkAllReady();
+    }
+
+    synchronized void checkAllReady() {
+        boolean allClientsReady = clients.stream().allMatch(c -> c.isReady);
+        if (hostReady && allClientsReady) {
+            startGameCountdown();
+        }
+    }
+
+    void startGameCountdown() {
+        System.out.println("Все готовы! Игра начнётся через 3 секунды...");
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                startGame();
+            }
+        }, 3000);
+    }
+
+    public void startGame() {
+        System.out.println("Игра начинается!");
+        for (ClientHandler client : clients) {
+            try {
+                client.out.writeUTF("START_GAME");
+                client.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // Здесь можно вызвать переключение FXML для самого хоста
+        // (например, вызвать метод на контроллере)
+    }
+
     // Обработчик клиентов
     private static class ClientHandler extends Thread {
         private Socket socket;
         private GameServer server;
         private DataInputStream in;
         private DataOutputStream out;
+        boolean isReady = false;
+
+        public boolean isReady() {
+            return isReady;
+        }
+
+        public void setReady(boolean ready) {
+            this.isReady = ready;
+        }
 
         public ClientHandler(Socket socket, GameServer server) {
             this.socket = socket;
@@ -53,7 +102,14 @@ public class GameServer extends Thread {
                 String clientCode = in.readUTF();
                 out.writeBoolean(true); // Подтверждение (можно добавить проверку)
 
-                // Здесь можно добавить логику синхронизации игроков
+                while (true) {
+                    String message = in.readUTF();
+                    if ("PLAYER_READY".equals(message)) {
+                        setReady(true);
+                        System.out.println("Игрок готов: " + socket.getInetAddress());
+                        server.checkAllReady();
+                    }
+                }
 
             } catch (IOException e) {
                 System.out.println("Клиент отключился.");
