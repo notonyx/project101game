@@ -64,6 +64,7 @@ public class GameServer extends Thread {
             try {
                 client.out.writeUTF("START_GAME");
                 client.out.flush();
+                System.out.println("Отправлено START_GAME клиенту: " + client.socket.getInetAddress());
             } catch (IOException e) {
                 e.printStackTrace();
             }

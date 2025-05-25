@@ -50,10 +50,14 @@ public class MenuController {
     @FXML
     private void onCreateRoomClick() {
         try {
-            int port = Integer.parseInt(ipPortField.getText());
+
+            String[] lst = ipPortField.getText().split(":");
+            String hostIP = lst[0];
+            int port = Integer.parseInt(lst[1]);
             GameServer server = new GameServer(port);
             server.start(); // Запуск сервера
-
+            GameClient client = new GameClient();
+            client.connect(hostIP, port); // ip в хамачи мой (хоста)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/waiting-room.fxml"));
             Parent root = loader.load();
 
