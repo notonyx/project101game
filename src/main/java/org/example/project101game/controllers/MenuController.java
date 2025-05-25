@@ -49,26 +49,53 @@ public class MenuController {
 
     @FXML
     private void onCreateRoomClick() {
-        int port = Integer.parseInt(ipPortField.getText());
-        new GameServer(port).start(); // Запуск сервера
-        SceneSwitcher.switchTo("waiting-room.fxml");
-    }
+        try {
+            int port = Integer.parseInt(ipPortField.getText());
+            new GameServer(port).start(); // Запуск сервера
 
-    // Подключение к комнате (клиент)
-    @FXML
-    private void onJoinClick() {
-        String [] lst = ipPortField.getText().split(":");
-        String hostIP = lst[0];
-        int port = Integer.parseInt(lst[1]);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/waiting-room.fxml"));
+            Parent root = loader.load();
 
-        GameClient client = new GameClient();
-        if (client.connect(hostIP, port)) {
-            SceneSwitcher.switchTo("waiting-room.fxml");
-            System.out.println("ПОЛЬЗОВАТЕЛЬ ПОДКЛЮЧИЛСЯ");
-        } else {
-            showAlert("Ошибка", "Не удалось подключиться!");
+            WaitingRoomController controller = loader.getController();
+            controller.setHost(true); // передаем, что это хост
+
+            Stage stage = (Stage) ipPortField.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    @FXML
+    private void onJoinClick() {
+        try {
+            String[] lst = ipPortField.getText().split(":");
+            String hostIP = lst[0];
+            int port = Integer.parseInt(lst[1]);
+
+            GameClient client = new GameClient();
+            if (client.connect(hostIP, port)) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/waiting-room.fxml"));
+                Parent root = loader.load();
+
+                WaitingRoomController controller = loader.getController();
+                controller.setHost(false); // передаем, что это не хост
+
+                Stage stage = (Stage) ipPortField.getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.show();
+
+                System.out.println("ПОЛЬЗОВАТЕЛЬ ПОДКЛЮЧИЛСЯ");
+            } else {
+                showAlert("Ошибка", "Не удалось подключиться!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);

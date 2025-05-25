@@ -16,6 +16,10 @@ public class GameClient {
             socket = new Socket(hostIP, port);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+
+            listenToServer();  // Запускаем слушатель сообщений от сервера
+
+
             return true;
         } catch (IOException e) {
             return false;
@@ -29,4 +33,40 @@ public class GameClient {
             e.printStackTrace();
         }
     }
+
+    public void sendReady() {
+        try {
+            out.writeUTF("PLAYER_READY");
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listenToServer() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    String message = in.readUTF();
+                    if ("START_GAME".equals(message)) {
+                        System.out.println("Сервер запустил игру");
+                        // Здесь вызови метод для смены сцены / переключения FXML
+                        onStartGameReceived();
+
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Связь с сервером прервана");
+            }
+        }).start();
+    }
+
+
+
+    private void onStartGameReceived() {
+        // TODO: Здесь переключение на нужный FXML (делай через Platform.runLater в контроллере)
+        System.out.println("Игра начинается! Здесь надо менять экран.");
+    }
+
+
 }
