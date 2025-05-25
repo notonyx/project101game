@@ -51,13 +51,16 @@ public class MenuController {
     private void onCreateRoomClick() {
         try {
             int port = Integer.parseInt(ipPortField.getText());
-            new GameServer(port).start(); // Запуск сервера
+            GameServer server = new GameServer(port);
+            server.start(); // Запуск сервера
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/waiting-room.fxml"));
             Parent root = loader.load();
 
+
             WaitingRoomController controller = loader.getController();
             controller.setHost(true); // передаем, что это хост
+            controller.setClientAndServer(null, server, true);  // клиент = null, сервер = server, isHost = true
 
             Stage stage = (Stage) ipPortField.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -82,7 +85,7 @@ public class MenuController {
 
                 WaitingRoomController controller = loader.getController();
                 controller.setHost(false); // передаем, что это не хост
-
+                controller.setClientAndServer(client, null, false);  // клиент = client, сервер = null, isHost = false
                 Stage stage = (Stage) ipPortField.getScene().getWindow();
                 stage.setScene(new Scene(root));
                 stage.show();
