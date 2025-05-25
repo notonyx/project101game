@@ -8,7 +8,6 @@ public class GameServer extends Thread {
     private ServerSocket serverSocket;
     private int port;
     private List<ClientHandler> clients = new ArrayList<>();
-    private boolean hostReady = false; // Хост как игрок
 
     public GameServer(int port) {
         this.port = port;
@@ -33,16 +32,18 @@ public class GameServer extends Thread {
         }
     }
 
-    // Вызывается из интерфейса хоста при нажатии на кнопку "Готов"
+    // Метод для установки готовности хоста (хост — первый клиент в списке, например)
     public synchronized void setHostReady(boolean ready) {
-        this.hostReady = ready;
+        if (clients.isEmpty()) return;  // если нет клиентов — ничего не делать
+        ClientHandler hostClient = clients.get(0); // считаем, что хост — первый клиент
+        hostClient.setReady(ready);
         System.out.println("Хост готов: " + ready);
         checkAllReady();
     }
 
     synchronized void checkAllReady() {
         boolean allClientsReady = clients.stream().allMatch(c -> c.isReady);
-        if (hostReady && allClientsReady) {
+        if (allClientsReady) {
             startGameCountdown();
         }
     }
@@ -67,11 +68,8 @@ public class GameServer extends Thread {
                 e.printStackTrace();
             }
         }
-        // Здесь можно вызвать переключение FXML для самого хоста
-        // (например, вызвать метод на контроллере)
     }
 
-    // Обработчик клиентов
     private static class ClientHandler extends Thread {
         private Socket socket;
         private GameServer server;
@@ -79,17 +77,13 @@ public class GameServer extends Thread {
         private DataOutputStream out;
         boolean isReady = false;
 
-        public boolean isReady() {
-            return isReady;
+        public ClientHandler(Socket socket, GameServer server) {
+            this.socket = socket;
+            this.server = server;
         }
 
         public void setReady(boolean ready) {
             this.isReady = ready;
-        }
-
-        public ClientHandler(Socket socket, GameServer server) {
-            this.socket = socket;
-            this.server = server;
         }
 
         @Override
@@ -97,10 +91,7 @@ public class GameServer extends Thread {
             try {
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
-
-                // Пример: получение кода комнаты от клиента
-                String clientCode = in.readUTF();
-                out.writeBoolean(true); // Подтверждение (можно добавить проверку)
+                out.writeBoolean(true);
 
                 while (true) {
                     String message = in.readUTF();
@@ -108,8 +99,7 @@ public class GameServer extends Thread {
                         setReady(true);
                         System.out.println("Игрок готов: " + socket.getInetAddress());
                         server.checkAllReady();
-                    }
-                    else if ("PLAYER_NOT_READY".equals(message)) {
+                    } else if ("PLAYER_NOT_READY".equals(message)) {
                         setReady(false);
                         System.out.println("Игрок НЕ готов: " + socket.getInetAddress());
                         server.checkAllReady();
