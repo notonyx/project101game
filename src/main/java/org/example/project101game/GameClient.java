@@ -56,10 +56,12 @@ public class GameClient {
     }
 
     public void listenToServer() {
+        System.out.println("Клиент начал слушать сервер"); // ← ЭТО
         new Thread(() -> {
             try {
                 while (true) {
                     String message = in.readUTF();
+                    System.out.println("Получено сообщение от сервера: " + message);
                     if ("START_GAME".equals(message)) {
                         System.out.println("Сервер запустил игру");
                         // Здесь вызови метод для смены сцены / переключения FXML
