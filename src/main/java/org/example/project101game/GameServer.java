@@ -92,7 +92,7 @@ public class GameServer extends Thread {
             try {
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
-                out.writeBoolean(true);
+
 
                 while (true) {
                     String message = in.readUTF();
