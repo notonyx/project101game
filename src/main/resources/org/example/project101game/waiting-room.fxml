@@ -52,8 +52,12 @@
 
             <Button fx:id="randomButton" style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;" text="рандом" />
 
-            <Button fx:id="continueButton" onAction="#onStartClick" style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;" text="продолжить" />
-         <BorderPane.margin>
+            <Button
+                    fx:id="readyButton"
+                    onAction="#onReadyClick"
+                    style="-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;"
+                    text="Не готов"
+            />         <BorderPane.margin>
             <Insets left="100.0" />
          </BorderPane.margin>
         </VBox>

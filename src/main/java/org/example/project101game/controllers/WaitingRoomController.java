@@ -1,6 +1,8 @@
 package org.example.project101game.controllers;
 
 import javafx.scene.control.Button;
+import org.example.project101game.GameClient;
+import org.example.project101game.GameServer;
 import org.example.project101game.SceneSwitcher;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -10,6 +12,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,9 +24,15 @@ public class WaitingRoomController {
     @FXML private Circle avatarCircle;
     @FXML private TextField nameField;
     @FXML private Button randomButton;
-    @FXML private Button continueButton;
+    @FXML private Button readyButton;
     @FXML private GridPane avatarGrid;
     @FXML private Label readyLabel;
+
+    private GameClient gameClient; // для клиентов
+    private GameServer gameServer; // только для хоста
+
+    boolean isHost = false;
+    private boolean isReady = false; // по умолчанию — не готов
 
     private static String roomCode = "0000";
 
@@ -37,6 +46,11 @@ public class WaitingRoomController {
     public static void setRoomCode(String code) {
         roomCode = code;
     }
+
+    public void setHost(boolean isHost) {
+        this.isHost = isHost;
+    }
+
 
     @FXML
     public void initialize() {
@@ -61,6 +75,7 @@ public class WaitingRoomController {
         setupAvatarSelection();
     }
 
+
     @FXML
     protected void onRenameClick() {
         // логика смены имени игрока
@@ -76,6 +91,34 @@ public class WaitingRoomController {
         SceneSwitcher.switchTo("game.fxml");
     }
 
+    @FXML
+    private void onReadyClick() {
+        isReady = !isReady;
+        if (isReady) {
+            readyButton.setText("Готов");
+            readyButton.setStyle("-fx-background-color: rgba(80, 200, 120, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;");
+            if (isHost) {
+                if (gameServer != null) {
+                    gameServer.setHostReady(true);
+                }
+            } else {
+                gameClient.sendReady();
+            }
+        } else {
+            readyButton.setText("Не готов");
+            readyButton.setStyle("-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;");
+            if (isHost) {
+                if (gameServer != null) {
+                    gameServer.setHostReady(false);
+                }
+            } else {
+                gameClient.sendNotReady();
+            }
+        }
+    }
+
+
+
     private void loadAvatarImages() {
         // Загрузка изображений аватаров (замените на ваши пути)
         for (int i = 1; i <= 9; i++) {
@@ -89,6 +132,13 @@ public class WaitingRoomController {
             }
         }
     }
+
+    public void setClientAndServer(GameClient client, GameServer server, boolean isHost) {
+        this.gameClient = client;
+        this.gameServer = server;
+        this.isHost = isHost;
+    }
+
 
     private void setupAvatarSelection() {
         // Добавляем обработчики для всех кружков в GridPane
