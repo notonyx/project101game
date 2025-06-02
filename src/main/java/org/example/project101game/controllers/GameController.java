@@ -90,9 +90,9 @@ public class GameController {
 
     private void loadAvatars() {
         try {
-            Image avatar1 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar1.jpg"));
-            Image avatar2 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar2.jpg"));
-            Image avatar3 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar3.jpg"));
+            Image avatar1 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar1.png"));
+            Image avatar2 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar2.png"));
+            Image avatar3 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar3.png"));
 
             opponent1Avatar.setFill(new ImagePattern(avatar1));
             opponent2Avatar.setFill(new ImagePattern(avatar2));
