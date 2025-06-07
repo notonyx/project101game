@@ -92,7 +92,7 @@ public class GameClient {
                             String[] parts = token.split("-");
                             Suit suit = Suit.valueOf(parts[1]);
                             Rank rank = Rank.valueOf(parts[0]);
-                            initialHand.add(new org.example.project101game.models.ServerCard(suit, rank));
+                            initialHand.add(new ServerCard(suit, rank));
                         }
                     } else if (msg.startsWith("turn:")) {
                         // Формат: turn:PLAYER_ID

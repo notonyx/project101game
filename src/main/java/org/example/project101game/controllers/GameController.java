@@ -245,7 +245,6 @@ public class GameController {
         // 1. Сброс старой руки и сброса
         playerHandCards.clear();
         discardPile.clear();
-
         // 2. Преобразуем ServerCard → Card (с Image) и заполняем playerHandCards
         for (ServerCard sc : serverHand) {
             String suitName = sc.getSuit().name().toLowerCase();

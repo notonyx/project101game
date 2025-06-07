@@ -145,14 +145,16 @@ public class GameServer extends Thread {
         for (ClientHandler c : clients) {
             String ip = c.socket.getInetAddress().getHostAddress();
             try {
-                c.out.writeUTF("START_GAME");
-                c.out.flush();
-                System.out.println("Отправлено START_GAME клиенту: " + ip);
-                // и сразу уведомляем о ходе
+                // уведомляем чей ход
                 String turnMsg = "turn:" + firstPlayer;
                 c.out.writeUTF(turnMsg);
                 c.out.flush();
                 System.out.println("Отправлено " + turnMsg + " клиенту: " + ip);
+                // и запускаем игру
+                c.out.writeUTF("START_GAME");
+                c.out.flush();
+                System.out.println("Отправлено START_GAME клиенту: " + ip);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
