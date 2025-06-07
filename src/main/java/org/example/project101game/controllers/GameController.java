@@ -32,16 +32,23 @@ import java.util.List;
 
 import org.example.project101game.models.Card;
 import org.example.project101game.models.Rank;
+import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
 
 public class GameController {
 
-    @FXML private HBox playerHand;
-    @FXML private ImageView deckView;
-    @FXML private ImageView discardPileView;
-    @FXML private VBox opponent1Box, opponent2Box, opponent3Box;
-    @FXML private Circle opponent1Avatar, opponent2Avatar, opponent3Avatar;
-    @FXML private Label opponent1Cards, opponent2Cards, opponent3Cards;
+    @FXML
+    private HBox playerHand;
+    @FXML
+    private ImageView deckView;
+    @FXML
+    private ImageView discardPileView;
+    @FXML
+    private VBox opponent1Box, opponent2Box, opponent3Box;
+    @FXML
+    private Circle opponent1Avatar, opponent2Avatar, opponent3Avatar;
+    @FXML
+    private Label opponent1Cards, opponent2Cards, opponent3Cards;
 
     private int currentPage = 0;
     private static final int CARDS_PER_PAGE = 9;
@@ -54,7 +61,7 @@ public class GameController {
         SceneSwitcher.switchTo("menu.fxml");
     }
 
-//    @FXML
+    //    @FXML
 //    protected void onSettingsClick() {
 //        SceneSwitcher.switchTo("settings.fxml");
 //    }
@@ -81,19 +88,7 @@ public class GameController {
         }
     }
 
-     @FXML
-    public void initialize() {
-        // Загрузка аватаров противников (пример)
-        loadAvatars();
-
-        // Инициализация тестовых данных
-        initTestData();
-
-        // Отображение первой страницы карт
-        showPlayerCardsPage();
-    }
-
-     private void loadAvatars() {
+    private void loadAvatars() {
         try {
             Image avatar1 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar1.jpg"));
             Image avatar2 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar2.jpg"));
@@ -124,11 +119,11 @@ public class GameController {
         // Добавляем обводку
         for (int y = 0; y < height; y++) {
             writer.setColor(0, y, Color.BLACK);
-            writer.setColor(width-1, y, Color.BLACK);
+            writer.setColor(width - 1, y, Color.BLACK);
         }
         for (int x = 0; x < width; x++) {
             writer.setColor(x, 0, Color.BLACK);
-            writer.setColor(x, height-1, Color.BLACK);
+            writer.setColor(x, height - 1, Color.BLACK);
         }
 
         // Добавляем текст (номер карты) в центр
@@ -136,7 +131,7 @@ public class GameController {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.setFont(Font.font(18));
-        gc.fillText(String.valueOf(cardNumber), width/2 - 5, height/2 + 5);
+        gc.fillText(String.valueOf(cardNumber), width / 2 - 5, height / 2 + 5);
 
         // Конвертируем Canvas в Image
         SnapshotParameters params = new SnapshotParameters();
@@ -177,61 +172,6 @@ public class GameController {
 //        gc.fillRect(0, 0, width, height);
 //        return canvas.snapshot(null, null);
 //    }
-
-    private void initializeDeck() {
-        deck = new ArrayList<>(); // Инициализируем колоду
-
-        for (Suit suit : Suit.values()) {
-            for (Rank rank : Rank.values()) {
-                try {
-                    String path = String.format("/org/example/project101game/cards/%s/%s.png",
-                        suit.name().toLowerCase(),
-                        rank.getFileName()); // Используем getFileName()
-                    Image image = new Image(getClass().getResourceAsStream(path));
-                    deck.add(new Card(suit, rank, image));
-                } catch (Exception e) {
-                    System.err.println("Не удалось загрузить карту: " + suit + "_" + rank);
-                    // Создаем placeholder
-                    Image placeholder = createCardPlaceholder(suit, rank);
-                    deck.add(new Card(suit, rank, placeholder));
-                }
-            }
-        }
-
-        Collections.shuffle(deck); // Перемешиваем колоду
-
-        // Загружаем рубашку
-        try {
-            Image backImage = new Image(getClass().getResourceAsStream("/org/example/project101game/cards/card_back.png"));
-            deckView.setImage(backImage);
-        } catch (Exception e) {
-            System.err.println("Не удалось загрузить рубашку карты");
-            //deckView.setImage(createBackPlaceholder());
-        }
-    }
-
-    private void initTestData() {
-//        initializeDeck(); // Инициализируем колоду
-//
-//        // Раздаем начальные карты игроку
-//        for (int i = 0; i < 6; i++) { // Раздаем 6 карт
-//            if (!deck.isEmpty()) {
-//                playerHandCards.add(deck.remove(0));
-//            }
-//        }
-//
-//        // Установка количества карт у противников
-//        opponent1Cards.setText("5");
-//        opponent2Cards.setText("7");
-//        opponent3Cards.setText("3");
-//
-//        // Установка первой карты в сброс
-//        if (!deck.isEmpty()) {
-//            Card firstCard = deck.remove(0);
-//            discardPile.add(firstCard);
-//            discardPileView.setImage(firstCard.getImage());
-//        }
-    }
 
     private void showPlayerCardsPage() {
         playerHand.getChildren().clear();
@@ -290,6 +230,56 @@ public class GameController {
             System.out.println("Взята карта: " + drawnCard);
         } else {
             System.out.println("Колода пуста!");
+        }
+    }
+
+
+    /**
+     * Вызывается сразу после загрузки game.fxml
+     *
+     * @param serverHand    список пришедших от сервера ServerCard (Suit + Rank)
+     * @param myId          ваш уникальный идентификатор (IP или UUID)
+     * @param currentTurnId — чей сейчас ход (тоже тот же идентификатор)
+     */
+    public void initGame(List<ServerCard> serverHand, String myId, String currentTurnId) {
+        // 1. Сброс старой руки и сброса
+        playerHandCards.clear();
+        discardPile.clear();
+
+        // 2. Преобразуем ServerCard → Card (с Image) и заполняем playerHandCards
+        for (ServerCard sc : serverHand) {
+            String suitName = sc.getSuit().name().toLowerCase();
+            String rankFile = sc.getRank().getFileName();
+            String path = String.format("/org/example/project101game/cards/%s/%s.png", suitName, rankFile);
+            Image img;
+            try {
+                img = new Image(getClass().getResourceAsStream(path));
+            } catch (Exception e) {
+                img = createCardPlaceholder(sc.getSuit(), sc.getRank());
+            }
+            playerHandCards.add(new Card(sc.getSuit(), sc.getRank(), img));
+        }
+
+        // 3. Показываем первую страницу руки
+        currentPage = 0;
+        showPlayerCardsPage();
+
+        // 4. Устанавливаем вид рубашки колоды
+        try {
+            deckView.setImage(new Image(getClass().getResourceAsStream("/org/example/project101game/cards/card_back.png")));
+            deckView.setVisible(true);
+        } catch (Exception ignore) {
+        }
+
+        // 5. Обновляем статус хода
+        boolean isMyTurn = myId.equals(currentTurnId);
+        deckView.setDisable(!isMyTurn);          // если не ваш ход, нельзя брать карту
+        playerHand.setDisable(!isMyTurn);        // если не ваш ход, нельзя кликать по руке
+        // Здесь можно также подсветить чей ход, например:
+        if (isMyTurn) {
+            System.out.println("Ваш ход!");
+        } else {
+            System.out.println("Ход другого игрока: " + currentTurnId);
         }
     }
 

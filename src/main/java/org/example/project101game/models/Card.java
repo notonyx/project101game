@@ -13,10 +13,21 @@ public class Card {
         this.image = image;
     }
 
-    public Suit getSuit() { return suit; }
-    public Rank getRank() { return rank; }
-    public Image getImage() { return image; }
-    public int getValue() { return rank.getValue(); }
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public int getValue() {
+        return rank.getValue();
+    }
 
     @Override
     public String toString() {
