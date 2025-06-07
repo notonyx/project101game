@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
+import org.example.project101game.models.ServerCard;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +39,7 @@ public class WaitingRoomController {
 
     private GameClient gameClient; // для клиентов
     private GameServer gameServer; // только для хоста
+    private String myClientId;
 
 
 
@@ -65,6 +67,11 @@ public class WaitingRoomController {
         this.gameClient = client;
         this.gameClient.setWaitingRoomController(this);
     }
+
+    public void setMyClientId(String clientId) {
+        this.myClientId = clientId;
+    }
+
 
 
     @FXML
@@ -186,20 +193,23 @@ public class WaitingRoomController {
         return randomNames.get(random.nextInt(randomNames.size()));
     }
 
-    public void onStartGameReceived() {
-        System.out.println("onStartGameReceived() вызван");
+    // В WaitingRoomController:
+    public void onStartGameReceived(List<ServerCard> hand, String currentTurnId) {
         Platform.runLater(() -> {
-            System.out.println("Platform.runLater() выполняется");
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/game.fxml"));
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/org/example/project101game/game.fxml"));
                 Parent root = loader.load();
-                Stage stage = (Stage) rootPane.getScene().getWindow(); // если root не инициализирован, тогда ищем другой способ
+                GameController gc = loader.getController();
+                gc.initGame(hand, myClientId, currentTurnId);
+                Stage stage = (Stage) rootPane.getScene().getWindow();
                 stage.setScene(new Scene(root));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
+
 
 
 }
