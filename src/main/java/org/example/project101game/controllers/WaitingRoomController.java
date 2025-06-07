@@ -1,6 +1,12 @@
 package org.example.project101game.controllers;
 
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.example.project101game.GameClient;
 import org.example.project101game.GameServer;
 import org.example.project101game.SceneSwitcher;
@@ -27,9 +33,13 @@ public class WaitingRoomController {
     @FXML private Button readyButton;
     @FXML private GridPane avatarGrid;
     @FXML private Label readyLabel;
+    @FXML private BorderPane rootPane;
+
 
     private GameClient gameClient; // для клиентов
     private GameServer gameServer; // только для хоста
+
+
 
     boolean isHost = false;
     private boolean isReady = false; // по умолчанию — не готов
@@ -49,6 +59,11 @@ public class WaitingRoomController {
 
     public void setHost(boolean isHost) {
         this.isHost = isHost;
+    }
+
+    public void setGameClient(GameClient client) {
+        this.gameClient = client;
+        this.gameClient.setWaitingRoomController(this);
     }
 
 
@@ -170,4 +185,21 @@ public class WaitingRoomController {
         Random random = new Random();
         return randomNames.get(random.nextInt(randomNames.size()));
     }
+
+    public void onStartGameReceived() {
+        System.out.println("onStartGameReceived() вызван");
+        Platform.runLater(() -> {
+            System.out.println("Platform.runLater() выполняется");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/game.fxml"));
+                Parent root = loader.load();
+                Stage stage = (Stage) rootPane.getScene().getWindow(); // если root не инициализирован, тогда ищем другой способ
+                stage.setScene(new Scene(root));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
 }

@@ -1,6 +1,8 @@
 package org.example.project101game;
 
 
+import org.example.project101game.controllers.WaitingRoomController;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,6 +12,12 @@ public class GameClient {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private WaitingRoomController waitingRoomController;
+
+    public void setWaitingRoomController(WaitingRoomController controller) {
+        this.waitingRoomController = controller;
+    }
+
 
     public boolean connect(String hostIP, int port) {
         try {
@@ -65,7 +73,9 @@ public class GameClient {
                     if ("START_GAME".equals(message)) {
                         System.out.println("Сервер запустил игру");
                         // Здесь вызови метод для смены сцены / переключения FXML
-                        onStartGameReceived();
+                        if (waitingRoomController != null) {
+                            waitingRoomController.onStartGameReceived();
+                        }
 
                     }
                 }
@@ -80,6 +90,7 @@ public class GameClient {
     private void onStartGameReceived() {
         // TODO: Здесь переключение на нужный FXML (делай через Platform.runLater в контроллере)
         System.out.println("Игра начинается! Здесь надо менять экран.");
+
     }
 
 

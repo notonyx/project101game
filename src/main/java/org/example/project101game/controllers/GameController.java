@@ -211,26 +211,26 @@ public class GameController {
     }
 
     private void initTestData() {
-        initializeDeck(); // Инициализируем колоду
-
-        // Раздаем начальные карты игроку
-        for (int i = 0; i < 6; i++) { // Раздаем 6 карт
-            if (!deck.isEmpty()) {
-                playerHandCards.add(deck.remove(0));
-            }
-        }
-
-        // Установка количества карт у противников
-        opponent1Cards.setText("5");
-        opponent2Cards.setText("7");
-        opponent3Cards.setText("3");
-
-        // Установка первой карты в сброс
-        if (!deck.isEmpty()) {
-            Card firstCard = deck.remove(0);
-            discardPile.add(firstCard);
-            discardPileView.setImage(firstCard.getImage());
-        }
+//        initializeDeck(); // Инициализируем колоду
+//
+//        // Раздаем начальные карты игроку
+//        for (int i = 0; i < 6; i++) { // Раздаем 6 карт
+//            if (!deck.isEmpty()) {
+//                playerHandCards.add(deck.remove(0));
+//            }
+//        }
+//
+//        // Установка количества карт у противников
+//        opponent1Cards.setText("5");
+//        opponent2Cards.setText("7");
+//        opponent3Cards.setText("3");
+//
+//        // Установка первой карты в сброс
+//        if (!deck.isEmpty()) {
+//            Card firstCard = deck.remove(0);
+//            discardPile.add(firstCard);
+//            discardPileView.setImage(firstCard.getImage());
+//        }
     }
 
     private void showPlayerCardsPage() {
