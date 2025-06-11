@@ -194,14 +194,14 @@ public class WaitingRoomController {
     }
 
     // В WaitingRoomController:
-    public void onStartGameReceived(List<ServerCard> hand, String currentTurnId) {
+    public void onStartGameReceived(List<ServerCard> hand, String currentTurnId, GameClient client) {
         Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader(
                         getClass().getResource("/org/example/project101game/game.fxml"));
                 Parent root = loader.load();
                 GameController gc = loader.getController();
-                gc.initGame(hand, myClientId, currentTurnId);
+                gc.initGame(hand, myClientId, currentTurnId, client);
                 Stage stage = (Stage) rootPane.getScene().getWindow();
                 stage.setScene(new Scene(root));
             } catch (IOException e) {

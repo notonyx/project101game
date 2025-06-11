@@ -1,7 +1,9 @@
 package org.example.project101game;
 
 
+import org.example.project101game.controllers.GameController;
 import org.example.project101game.controllers.WaitingRoomController;
+import org.example.project101game.models.Card;
 import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
@@ -23,13 +25,21 @@ public class GameClient {
     private String currentTurnId;
     private String myClientId; // инициализируется в menucontroller
 
+    private GameController gameController;
+
     public String getMyClientId() {
         return myClientId;
     }
 
 
+
+
     public void setWaitingRoomController(WaitingRoomController controller) {
         this.waitingRoomController = controller;
+    }
+
+    public void setGameController(GameController controller) {
+        this.gameController = controller;
     }
 
 
@@ -78,6 +88,16 @@ public class GameClient {
         }
     }
 
+    public void sendPlayCard(Card card) {
+        try {
+            out.writeUTF("PLAYER_PLAY_CARD:" + card.toString());
+            out.flush();
+            System.out.println("Отправил серверу карту " + card.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void listenToServer() {
         new Thread(() -> {
             try {
@@ -100,8 +120,11 @@ public class GameClient {
                     } else if ("START_GAME".equals(msg)) {
                         // Всё готово — переключаем сцену и передаём данные
                         if (waitingRoomController != null) {
-                            waitingRoomController.onStartGameReceived(initialHand, currentTurnId);
+                            waitingRoomController.onStartGameReceived(initialHand, currentTurnId, this);
                         }
+                    } else if (msg.startsWith("PLAYER_PLAY_CARD:")) {
+                        String c = msg.split(":")[1];
+                        gameController.playedCard(c);
                     }
                 }
             } catch (IOException e) {

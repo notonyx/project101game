@@ -145,14 +145,15 @@ public class GameServer extends Thread {
         for (ClientHandler c : clients) {
             String ip = c.socket.getInetAddress().getHostAddress();
             try {
-                c.out.writeUTF("START_GAME");
-                c.out.flush();
-                System.out.println("Отправлено START_GAME клиенту: " + ip);
-                // и сразу уведомляем о ходе
                 String turnMsg = "turn:" + firstPlayer;
                 c.out.writeUTF(turnMsg);
                 c.out.flush();
                 System.out.println("Отправлено " + turnMsg + " клиенту: " + ip);
+                c.out.writeUTF("START_GAME");
+                c.out.flush();
+                System.out.println("Отправлено START_GAME клиенту: " + ip);
+                // и сразу уведомляем о ходе
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -208,6 +209,21 @@ public class GameServer extends Thread {
         }
     }
 
+    private void sentPlayedCard(String message) {
+        for (ClientHandler c : clients) {
+            String ip = c.socket.getInetAddress().getHostAddress();
+            try {
+                c.out.writeUTF(message);
+                c.out.flush();
+                System.out.println("Отправлено " + message + " клиенту: " + ip);
+                // и сразу уведомляем о ходе
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static class ClientHandler extends Thread {
         private Socket socket;
         private GameServer server;
@@ -241,6 +257,9 @@ public class GameServer extends Thread {
                         setReady(false);
                         System.out.println("Игрок НЕ готов: " + socket.getInetAddress());
                         server.checkAllReady();
+                    } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
+                        System.out.println("Игрок отправил карту " + socket.getInetAddress());
+                        server.sentPlayedCard(message);
                     }
                 }
 

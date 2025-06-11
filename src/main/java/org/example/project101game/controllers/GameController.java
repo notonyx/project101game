@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.project101game.GameClient;
 import org.example.project101game.SceneSwitcher;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -55,6 +56,7 @@ public class GameController {
     private List<Card> deck = new ArrayList<>();
     private List<Card> playerHandCards = new ArrayList<>();
     private List<Card> discardPile = new ArrayList<>();
+    private GameClient client;
 
     @FXML
     protected void onBackClick() {
@@ -189,12 +191,36 @@ public class GameController {
             cardView.setOnMouseClicked(event -> {
                 // Играем карту - перемещаем в сброс
                 Card playedCard = playerHandCards.remove(cardIndex);
-                discardPile.add(playedCard);
-                discardPileView.setImage(playedCard.getImage());
+
+                this.client.sendPlayCard(card);
+                this.client.setGameController(this);
                 showPlayerCardsPage();
             });
 
             playerHand.getChildren().add(cardView);
+        }
+    }
+
+    public void playedCard(String msg) {
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                try {
+                    String path = String.format("/org/example/project101game/cards/%s/%s.png",
+                            suit.name().toLowerCase(),
+                            rank.getFileName()); // Используем getFileName()
+                    Image image = new Image(getClass().getResourceAsStream(path));
+                    Card card = new Card(suit, rank, image);
+                    if (msg.equals(card.getRank().toString() + " " + card.getSuit().toString())) {
+                        discardPile.add(card);
+                        discardPileView.setImage(card.getImage());
+                    }
+                } catch (Exception e) {
+                    System.err.println("Не удалось загрузить карту: " + suit + "_" + rank);
+                    // Создаем placeholder
+                    Image placeholder = createCardPlaceholder(suit, rank);
+                    deck.add(new Card(suit, rank, placeholder));
+                }
+            }
         }
     }
 
@@ -241,10 +267,11 @@ public class GameController {
      * @param myId          ваш уникальный идентификатор (IP или UUID)
      * @param currentTurnId — чей сейчас ход (тоже тот же идентификатор)
      */
-    public void initGame(List<ServerCard> serverHand, String myId, String currentTurnId) {
+    public void initGame(List<ServerCard> serverHand, String myId, String currentTurnId, GameClient client) {
         // 1. Сброс старой руки и сброса
         playerHandCards.clear();
         discardPile.clear();
+        this.client = client;
 
         // 2. Преобразуем ServerCard → Card (с Image) и заполняем playerHandCards
         for (ServerCard sc : serverHand) {
