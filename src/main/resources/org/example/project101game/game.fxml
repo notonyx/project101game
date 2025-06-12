@@ -36,7 +36,7 @@
               <!-- Колода -->
               <VBox alignment="CENTER" spacing="10">
                   <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Колода" />
-                  <ImageView fx:id="deckView" fitHeight="292.0" fitWidth="193.0" onMouseClicked="#onDeckClick">
+                  <ImageView fx:id="deckView" fitHeight="292.0" fitWidth="193.0">
                       <image>
                           <Image url="@card_back.jpg" />
                       </image>

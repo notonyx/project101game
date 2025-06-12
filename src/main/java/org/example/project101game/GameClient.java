@@ -32,8 +32,6 @@ public class GameClient {
     }
 
 
-
-
     public void setWaitingRoomController(WaitingRoomController controller) {
         this.waitingRoomController = controller;
     }
@@ -56,6 +54,16 @@ public class GameClient {
             return true;
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    public void sendDrawCard() {
+        try {
+            out.writeUTF("PLAYER_DRAW_CARD");
+            out.flush();
+            System.out.println("Отправлено: PLAYER_DRAW_CARD");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,10 +131,17 @@ public class GameClient {
                             waitingRoomController.onStartGameReceived(initialHand, currentTurnId, this);
                         }
                     } else if (msg.startsWith("PLAYER_PLAY_CARD:")) {
-                        System.out.println("THIS IS MESSAGE" + msg);
                         String c = msg.split(":")[1];
                         System.out.println(c);
                         gameController.playedCard(c);
+                    } else if (msg.startsWith("PLAYER_DRAW_CARD:")) {
+
+                        String payload = msg.split(":")[1];
+                        String[] parts = payload.split("-");
+                        Rank rank = Rank.valueOf(parts[0]);
+                        Suit suit = Suit.valueOf(parts[1]);
+                        ServerCard newCard = new ServerCard(suit, rank);
+                        gameController.onCardDrawn(newCard);
                     }
                 }
             } catch (IOException e) {

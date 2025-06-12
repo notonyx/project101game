@@ -224,6 +224,21 @@ public class GameServer extends Thread {
         }
     }
 
+    private void handleDrawCard(ClientHandler handler) {
+        String playerId = handler.socket.getInetAddress().getHostAddress();
+        if (deck.isEmpty()) {
+//            sendMessageToClient(playerId, "DRAW_CARD:EMPTY");
+            return;
+        }
+
+        ServerCard drawnCard = deck.remove(0);
+        playerHands.get(playerId).add(drawnCard);
+
+        String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
+        sendMessageToClient(playerId, msg);
+        System.out.println("Игрок " + playerId + " получил карту: " + msg);
+    }
+
     private static class ClientHandler extends Thread {
         private Socket socket;
         private GameServer server;
@@ -260,6 +275,9 @@ public class GameServer extends Thread {
                     } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
                         server.sentPlayedCard(message);
+                    } else if ("PLAYER_DRAW_CARD".equals(message)) {
+                        System.out.println("Игрок взял карту " + socket.getInetAddress());
+                        server.handleDrawCard(this); // Обработать взятие карты
                     }
                 }
 

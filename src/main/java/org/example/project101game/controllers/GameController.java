@@ -1,5 +1,6 @@
 package org.example.project101game.controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,10 +64,6 @@ public class GameController {
         SceneSwitcher.switchTo("menu.fxml");
     }
 
-    //    @FXML
-//    protected void onSettingsClick() {
-//        SceneSwitcher.switchTo("settings.fxml");
-//    }
     @FXML
     private void onSettingsClick(ActionEvent event) {
         try {
@@ -193,7 +190,7 @@ public class GameController {
                 Card playedCard = playerHandCards.remove(cardIndex);
 
                 this.client.sendPlayCard(card);
-                this.client.setGameController(this);
+//                this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
                 showPlayerCardsPage();
             });
 
@@ -224,39 +221,11 @@ public class GameController {
         }
     }
 
-    private void onCardClick(ImageView cardView, int cardIndex) {
-        System.out.println("Играем карту #" + cardIndex);
-        discardPileView.setImage(cardView.getImage());
-        playerHandCards.remove(cardIndex);
-        showPlayerCardsPage();
-    }
-
     @FXML
     private void onChangeCardsClick() {
         int maxPages = (int) Math.ceil((double) playerHandCards.size() / CARDS_PER_PAGE);
         currentPage = (currentPage + 1) % maxPages;
         showPlayerCardsPage();
-    }
-
-    @FXML
-    private void onDeckClick() {
-        if (!deck.isEmpty()) {
-            // Берем верхнюю карту
-            Card drawnCard = deck.remove(0);
-            playerHandCards.add(drawnCard);
-
-            // Обновляем отображение
-            showPlayerCardsPage();
-
-            // Если колода пуста, скрываем ее
-            if (deck.isEmpty()) {
-                deckView.setVisible(false);
-            }
-
-            System.out.println("Взята карта: " + drawnCard);
-        } else {
-            System.out.println("Колода пуста!");
-        }
     }
 
 
@@ -286,6 +255,13 @@ public class GameController {
             }
             playerHandCards.add(new Card(sc.getSuit(), sc.getRank(), img));
         }
+        deckView.setOnMouseClicked(event -> {
+            // Отправляем серверу запрос на взятие карты
+            client.sendDrawCard();
+
+            System.out.println("Запрос на взятие карты отправлен серверу");
+        });
+
 
         // 3. Показываем первую страницу руки
         currentPage = 0;
@@ -309,5 +285,24 @@ public class GameController {
             System.out.println("Ход другого игрока: " + currentTurnId);
         }
     }
+
+    public void onCardDrawn(ServerCard card) {
+        String suitName = card.getSuit().name().toLowerCase();
+        String rankFile = card.getRank().getFileName();
+        String path = String.format("/org/example/project101game/cards/%s/%s.png", suitName, rankFile);
+        Image img;
+        try {
+            img = new Image(getClass().getResourceAsStream(path));
+        } catch (Exception e) {
+            img = createCardPlaceholder(card.getSuit(), card.getRank());
+        }
+
+        Card newCard = new Card(card.getSuit(), card.getRank(), img);
+        Platform.runLater(() -> {
+            playerHandCards.add(newCard);
+            showPlayerCardsPage();
+        });
+    }
+
 
 }
