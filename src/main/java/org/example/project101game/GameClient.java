@@ -112,7 +112,7 @@ public class GameClient {
                             String[] parts = token.split("-");
                             Suit suit = Suit.valueOf(parts[1]);
                             Rank rank = Rank.valueOf(parts[0]);
-                            initialHand.add(new org.example.project101game.models.ServerCard(suit, rank));
+                            initialHand.add(new ServerCard(suit, rank));
                         }
                     } else if (msg.startsWith("turn:")) {
                         // Формат: turn:PLAYER_ID
@@ -123,7 +123,9 @@ public class GameClient {
                             waitingRoomController.onStartGameReceived(initialHand, currentTurnId, this);
                         }
                     } else if (msg.startsWith("PLAYER_PLAY_CARD:")) {
+                        System.out.println("THIS IS MESSAGE" + msg);
                         String c = msg.split(":")[1];
+                        System.out.println(c);
                         gameController.playedCard(c);
                     }
                 }

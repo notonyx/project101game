@@ -202,6 +202,7 @@ public class WaitingRoomController {
                 Parent root = loader.load();
                 GameController gc = loader.getController();
                 gc.initGame(hand, myClientId, currentTurnId, client);
+                client.setGameController(gc);
                 Stage stage = (Stage) rootPane.getScene().getWindow();
                 stage.setScene(new Scene(root));
             } catch (IOException e) {
