@@ -56,6 +56,7 @@ public class GameController {
     private List<Card> discardPile = new ArrayList<>();
     private GameClient client;
     private boolean isMyTurn;
+    private Card currentCard;
 
     @FXML
     protected void onBackClick() {
@@ -101,6 +102,16 @@ public class GameController {
         } catch (Exception e) {
             System.err.println("Ошибка загрузки аватаров: " + e.getMessage());
         }
+    }
+
+    private boolean canPlay(Card card) {
+        if (currentCard == null) {
+            return true;
+        }
+        if (currentCard.getSuit().toString().equals(card.getSuit().toString()) || currentCard.getRank().toString().equals(card.getRank().toString())) {
+            return true;
+        }
+        return false;
     }
 
     private Image createTextCardImage(int cardNumber) {
@@ -193,8 +204,12 @@ public class GameController {
                     System.out.println("Не ваш ход, нельзя играть карту.");
                     return;
                 }
+                if (!canPlay(card)) {
+                    System.out.println("Вы не можете ходить данной картой");
+                    return;
+                }
                 Card playedCard = playerHandCards.remove(cardIndex);
-
+                currentCard = card;
                 this.client.sendPlayCard(card);
 //                this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
                 showPlayerCardsPage();
