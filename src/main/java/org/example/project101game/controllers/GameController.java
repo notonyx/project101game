@@ -41,14 +41,13 @@ import java.util.List;
 
 public class GameController {
 
+    public Label opponent1Name, opponent2Name, opponent3Name;
     @FXML
     private HBox playerHand;
     @FXML
     private ImageView deckView;
     @FXML
     private ImageView discardPileView;
-    @FXML
-    private VBox opponent1Box, opponent2Box, opponent3Box;
     @FXML
     private Circle opponent1Avatar, opponent2Avatar, opponent3Avatar;
     @FXML
@@ -346,4 +345,20 @@ public class GameController {
     }
 
 
+    public void setPlInfo(String name, String ava, byte idx) {
+        switch(idx){
+            case 1:
+                opponent1Avatar.setFill(new ImagePattern(WaitingRoomController.getAvatarImages().get(Integer.parseInt(ava))));
+                opponent1Name.setText(name);
+                break;
+            case 2:
+                opponent2Avatar.setFill(new ImagePattern(WaitingRoomController.getAvatarImages().get(Integer.parseInt(ava))));
+                opponent2Name.setText(name);
+                break;
+            case 3:
+                opponent3Avatar.setFill(new ImagePattern(WaitingRoomController.getAvatarImages().get(Integer.parseInt(ava))));
+                opponent3Name.setText(name);
+                break;
+        }
+    }
 }

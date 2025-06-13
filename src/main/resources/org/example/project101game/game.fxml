@@ -65,24 +65,24 @@
                          </HBox>
                           <VBox fx:id="opponent1Box" alignment="CENTER" prefHeight="320.0" prefWidth="222.0" spacing="5" GridPane.rowIndex="2">
                               <Circle fx:id="opponent1Avatar" fill="WHITE" radius="30" />
-                              <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 1" />
+                              <Label fx:id="opponent1Name" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 1" />
                               <Label fx:id="opponent1Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
                           </VBox>
 
                           <VBox fx:id="opponent2Box" alignment="CENTER" prefHeight="322.0" prefWidth="240.0" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
                               <Circle fx:id="opponent2Avatar" fill="WHITE" radius="30.0" />
-                              <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 2" />
+                              <Label fx:id="opponent2Name" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 2" />
                               <Label fx:id="opponent2Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
                           </VBox>
 
                              <VBox fx:id="opponent3Box" alignment="CENTER" prefHeight="308.0" prefWidth="202.0" spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="2">
                               <Circle fx:id="opponent3Avatar" fill="WHITE" radius="30.0" />
-                              <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 3" />
+                              <Label fx:id="opponent3Name" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 3" />
                               <Label fx:id="opponent3Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
                           </VBox>
                </children>
                <VBox.margin>
-                  <Insets left="50.0" right="50.0" />
+                  <Insets left="50.0" right="20.0" />
                </VBox.margin>
             </GridPane>
             <Separator opacity="0.0" orientation="VERTICAL" VBox.vgrow="ALWAYS" />

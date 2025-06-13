@@ -42,7 +42,7 @@ public class WaitingRoomController {
     private GameClient gameClient; // для клиентов
     private GameServer gameServer; // только для хоста
     private String myClientId;
-
+    private String clientName = "";
 
 
     boolean isHost = false;
@@ -51,7 +51,11 @@ public class WaitingRoomController {
 
     private static String roomCode = "0000";
 
-    private List<Image> avatarImages = new ArrayList<>();
+    public static List<Image> getAvatarImages() {
+        return avatarImages;
+    }
+
+    private static List<Image> avatarImages = new ArrayList<>();
     private List<String> randomNames = Arrays.asList(
             "Игрок1", "Геймер", "Победитель", "Новичок",
             "Эксперт", "Чемпион", "Мастер", "Легенда",
@@ -116,7 +120,9 @@ public class WaitingRoomController {
 
     @FXML
     private void onReadyClick() {
+        changeName(nameField.getText());
         isReady = !isReady;
+        nameField.setEditable(!isReady);
         if (isReady) {
             readyButton.setText("Готов");
             readyButton.setStyle("-fx-background-color: rgba(80, 200, 120, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;");
@@ -128,7 +134,7 @@ public class WaitingRoomController {
                 gameClient.sendReady();
             }
         } else {
-            readyButton.setText("Не готов");
+            readyButton.setText("не готов");
             readyButton.setStyle("-fx-background-color: rgba(160, 198, 56, 1); -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 360; -fx-pref-height: 70;");
             if (isHost) {
                 if (gameServer != null) {
@@ -186,6 +192,11 @@ public class WaitingRoomController {
 
     private void setAvatar(Image image) {
         avatarCircle.setFill(new ImagePattern(image));
+        if(gameClient != null) gameClient.sendChangeAvatar((byte) avatarImages.indexOf(image));
+    }
+
+    private void changeName(String newName){
+        gameClient.sendChangeName(newName);
     }
 
     private String getRandomName() {
@@ -226,5 +237,9 @@ public class WaitingRoomController {
     public void setClientCount(int readyCount, int count)
     {
         readyLabel.setText(readyCount + " / " + count);
+    }
+
+    public void blockReady() {
+        readyButton.setDisable(true);
     }
 }
