@@ -200,7 +200,7 @@ public class GameServer extends Thread {
     }
 
     private void handleDrawCard(ClientHandler handler) {
-        String playerId = handler.socket.getInetAddress().getHostAddress();
+        String playerId = handler.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
         if (deck.isEmpty() && discardPile.size() > 1) {
             // Сохраняем последнюю карту
             ServerCard topCard = discardPile.get(discardPile.size() - 1);
