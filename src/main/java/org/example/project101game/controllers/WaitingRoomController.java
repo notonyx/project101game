@@ -35,6 +35,7 @@ public class WaitingRoomController {
     @FXML private GridPane avatarGrid;
     @FXML private Label readyLabel;
     @FXML private BorderPane rootPane;
+    @FXML private Button backToMenuButton;
 
 
     private GameClient gameClient; // для клиентов
@@ -76,7 +77,7 @@ public class WaitingRoomController {
     @FXML
     public void initialize() {
         // Установка номера комнаты
-        roomLabel.setText("комната #" + roomCode);
+        // roomLabel.setText("комната #" + roomCode);
 
         // Загрузка изображений аватаров
         loadAvatarImages();
@@ -164,8 +165,7 @@ public class WaitingRoomController {
     private void setupAvatarSelection() {
         // Добавляем обработчики для всех кружков в GridPane
         for (int i = 0; i < avatarGrid.getChildren().size(); i++) {
-            if (avatarGrid.getChildren().get(i) instanceof Circle) {
-                Circle circle = (Circle) avatarGrid.getChildren().get(i);
+            if (avatarGrid.getChildren().get(i) instanceof Circle circle) {
                 int avatarIndex = i;
 
                 // Устанавливаем изображение для кружка, если оно есть
@@ -190,6 +190,16 @@ public class WaitingRoomController {
     private String getRandomName() {
         Random random = new Random();
         return randomNames.get(random.nextInt(randomNames.size()));
+    }
+
+    public void onBackToMenuClick(){
+        if(gameServer!=null) gameServer.interrupt();
+        try {
+            gameClient.getSocket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SceneSwitcher.switchTo("/org/example/project101game/menu.fxml");
     }
 
     // В WaitingRoomController:

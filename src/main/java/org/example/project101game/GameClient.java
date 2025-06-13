@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameClient {
+    public Socket getSocket() {
+        return socket;
+    }
+
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
