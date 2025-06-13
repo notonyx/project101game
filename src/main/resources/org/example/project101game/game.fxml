@@ -1,97 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.GameController">
+<StackPane fx:id="rootPane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.GameController">
+   <children>
 
-       <!-- Фоновое изображение -->
-    <ImageView fitHeight="1080.0" fitWidth="1920.0">
-        <image>
-            <Image url="@table.jpg" />
-        </image>
-    </ImageView>
+             <!-- Фоновое изображение -->
+       <ImageView fx:id="bgImage" fitHeight="1280.0" fitWidth="1920.0" StackPane.alignment="TOP_LEFT">
+           <Image url="@table.jpg" />
+       </ImageView>
+      <VBox alignment="CENTER">
+         <children>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                    <Button onAction="#onBackClick" style="-fx-font-size: 22; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="выйти" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin></Button>
+                  <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
+                    <Button alignment="CENTER" contentDisplay="CENTER" onAction="#onSettingsClick" style="-fx-font-size: 22; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="настройки" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin></Button>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </HBox>
+            <Separator opacity="0.0" orientation="VERTICAL" VBox.vgrow="ALWAYS" />
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
 
-    <StackPane>
+                         <!-- Игровое поле (колода и сброс) -->
+                         <HBox alignment="CENTER" prefHeight="361.0" prefWidth="597.0" spacing="100" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                             <!-- Колода -->
+                             <VBox alignment="CENTER" spacing="10">
+                                 <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Колода" />
+                                 <ImageView fx:id="deckView" fitHeight="292.0" fitWidth="193.0">
+                                     <image>
+                                         <Image url="@card_back.jpg" />
+                                     </image>
+                                 </ImageView>
+                             </VBox>
 
-            <!-- Игровые элементы -->
-            <VBox alignment="CENTER" spacing="40" />
-        </StackPane>
+                             <!-- Сброс (последняя сыгранная карта) -->
+                             <VBox alignment="CENTER" prefHeight="361.0" prefWidth="206.0" spacing="10">
+                                 <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Сброс" />
+                                 <ImageView fx:id="discardPileView" fitHeight="300.0" fitWidth="198.0" />
+                             </VBox>
+                         </HBox>
+                          <VBox fx:id="opponent1Box" alignment="CENTER" prefHeight="320.0" prefWidth="222.0" spacing="5" GridPane.rowIndex="2">
+                              <Circle fx:id="opponent1Avatar" fill="WHITE" radius="30" />
+                              <Label fx:id="opponent1Name" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 1" />
+                              <Label fx:id="opponent1Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
+                          </VBox>
+
+                          <VBox fx:id="opponent2Box" alignment="CENTER" prefHeight="322.0" prefWidth="240.0" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Circle fx:id="opponent2Avatar" fill="WHITE" radius="30.0" />
+                              <Label fx:id="opponent2Name" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 2" />
+                              <Label fx:id="opponent2Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
+                          </VBox>
+
+                             <VBox fx:id="opponent3Box" alignment="CENTER" prefHeight="308.0" prefWidth="202.0" spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                              <Circle fx:id="opponent3Avatar" fill="WHITE" radius="30.0" />
+                              <Label fx:id="opponent3Name" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 3" />
+                              <Label fx:id="opponent3Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
+                          </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="50.0" right="20.0" />
+               </VBox.margin>
+            </GridPane>
+            <Separator opacity="0.0" orientation="VERTICAL" VBox.vgrow="ALWAYS" />
+            <VBox alignment="BOTTOM_CENTER">
+               <children>
+                  <HBox>
+                     <children>
+                        <Separator opacity="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+
+                              <!-- Кнопка смены страницы карт -->
+                          <Button onAction="#onChangeCardsClick" style="-fx-font-size: 23; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="cменить">
+                           <HBox.margin>
+                              <Insets bottom="10.0" right="25.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
 
 
-    <VBox alignment="CENTER" layoutX="186.0" layoutY="810.0" prefHeight="214.0" prefWidth="1569.0" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(87, 134, 94, 0.7);">
-           <!-- Рука игрока -->
-        <HBox fx:id="playerHand" alignment="CENTER" spacing="10" />
-    </VBox>
-
-          <!-- Игровое поле (колода и сброс) -->
-          <HBox alignment="CENTER" layoutX="695.0" layoutY="331.0" prefHeight="361.0" prefWidth="597.0" spacing="100">
-              <!-- Колода -->
-              <VBox alignment="CENTER" spacing="10">
-                  <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Колода" />
-                  <ImageView fx:id="deckView" fitHeight="292.0" fitWidth="193.0">
-                      <image>
-                          <Image url="@card_back.jpg" />
-                      </image>
-                  </ImageView>
-              </VBox>
-
-              <!-- Сброс (последняя сыгранная карта) -->
-              <VBox alignment="CENTER" prefHeight="361.0" prefWidth="206.0" spacing="10">
-                  <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Сброс" />
-                  <ImageView fx:id="discardPileView" fitHeight="300.0" fitWidth="198.0" />
-              </VBox>
-          </HBox>
-          <!-- Противники (верхний ряд) -->
-          <HBox alignment="CENTER" layoutX="1684.0" layoutY="479.0" spacing="50" />
-     <Button layoutX="14.0" layoutY="15.0" onAction="#onBackClick" prefHeight="48.0" prefWidth="142.0" style="-fx-font-size: 22; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="выйти" textAlignment="CENTER" />
-     <Button alignment="CENTER" contentDisplay="CENTER" layoutX="1755.0" layoutY="15.0" onAction="#onSettingsClick" prefHeight="48.0" prefWidth="154.0" style="-fx-font-size: 22; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="настройки" textAlignment="CENTER" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
-           <VBox fx:id="opponent1Box" alignment="CENTER" layoutX="61.0" layoutY="339.0" prefHeight="320.0" prefWidth="222.0" spacing="5">
-               <Circle fx:id="opponent1Avatar" fill="WHITE" radius="30" />
-               <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 1" />
-               <Label fx:id="opponent1Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
-           </VBox>
-
-           <VBox fx:id="opponent2Box" alignment="CENTER" layoutX="835.0" layoutY="11.0" prefHeight="322.0" prefWidth="240.0" spacing="5">
-               <Circle fx:id="opponent2Avatar" fill="WHITE" radius="30.0" />
-               <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 2" />
-               <Label fx:id="opponent2Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
-           </VBox>
-
-         <!-- Кнопка смены страницы карт -->
-     <Button layoutX="1694.0" layoutY="740.0" onAction="#onChangeCardsClick" prefHeight="58.0" prefWidth="140.0" style="-fx-font-size: 23; -fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold;" text="cменить" />
-
-              <VBox fx:id="opponent3Box" alignment="CENTER" layoutX="1590.0" layoutY="364.0" prefHeight="308.0" prefWidth="202.0" spacing="5">
-               <Circle fx:id="opponent3Avatar" fill="WHITE" radius="30.0" />
-               <Label style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;" text="Игрок 3" />
-               <Label fx:id="opponent3Cards" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="#" />
-           </VBox>
-
-
-
-
-    <!-- Панель игроков -->
-   <!--  <HBox layoutX="150.0" layoutY="100.0" spacing="100.0" style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;">
-        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 1" />
-        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 2" />
-        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 3" />
-        <Label style="-fx-effect: dropshadow(gaussian, black, 5, 0.5, 0, 1);" text="игрок 4" />
-    </HBox>-->
-
-    <!-- Панель карт -->
-     <!--<HBox layoutX="460.0" layoutY="600.0" spacing="20.0">
-        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
-        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
-        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
-        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
-        <Label style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 10;" text="[Карта]" />
-    </HBox>-->
-
-    <!-- Кнопки управления -->
-     <!--<Button layoutX="1738.0" layoutY="20.0" onAction="#onBackClick" style="-fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 23; -fx-background-radius: 5;" text="выйти" />
-
-    <Button layoutX="1550.0" layoutY="20.0" onAction="#onSettingsClick" style="-fx-background-color: rgba(17, 86, 52, 1); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 23; -fx-background-radius: 5;" text="настройки" />
-    -->
-</AnchorPane>
+                   <VBox alignment="CENTER" prefHeight="214.0" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(87, 134, 94, 0.7);">
+                          <!-- Рука игрока -->
+                       <HBox fx:id="playerHand" alignment="CENTER" spacing="10" />
+                   </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="35.0" left="150.0" right="150.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+         <StackPane.margin>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+         </StackPane.margin>
+      </VBox>
+   </children>
+</StackPane>

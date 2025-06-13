@@ -35,7 +35,7 @@ public class GameClient {
     public String getMyClientId() {
         return myClientId;
     }
-
+    private String[] clientInfoOnWait;
 
     public void setWaitingRoomController(WaitingRoomController controller) {
         this.waitingRoomController = controller;
@@ -43,6 +43,7 @@ public class GameClient {
 
     public void setGameController(GameController controller) {
         this.gameController = controller;
+        Platform.runLater(() -> resolvePlayerInfo(Byte.parseByte(clientInfoOnWait[0]), clientInfoOnWait[1].split(",")));
     }
 
 
@@ -62,19 +63,31 @@ public class GameClient {
         }
     }
 
-    public void sendDrawCard() {
+    public void sendChangeName(String newName){
         try {
-            out.writeUTF("PLAYER_DRAW_CARD");
+            out.writeUTF("PLAYER_SET_NAME:" + newName);
             out.flush();
-            System.out.println("Отправлено: PLAYER_DRAW_CARD");
+            System.out.println("Отправлено: PLAYER_SET_NAME:" + newName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void disconnect() {
+    public void sendChangeAvatar(byte newId){
         try {
-            if (socket != null) socket.close();
+            out.writeUTF("PLAYER_SET_AVATAR:" + newId);
+            out.flush();
+            System.out.println("Отправлено: PLAYER_SET_AVATAR:" + newId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendDrawCard() {
+        try {
+            out.writeUTF("PLAYER_DRAW_CARD");
+            out.flush();
+            System.out.println("Отправлено: PLAYER_DRAW_CARD");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,6 +133,15 @@ public class GameClient {
         }
     }
 
+    private void resolvePlayerInfo(byte playerIdx, String[] playerInfo){
+        byte idx = 0;
+        for(String player: playerInfo){
+            String[] plInfo = player.split(":");
+            gameController.setPlInfo(plInfo[0], plInfo[1], (byte) ((playerIdx - idx + playerInfo.length) % playerInfo.length));
+            idx++;
+        }
+    }
+
     private void listenToServer() {
         new Thread(() -> {
             try {
@@ -153,18 +175,22 @@ public class GameClient {
                     } else if (msg.startsWith("PLAYER_PLAY_CARD:")) {
                         String c = msg.split(":")[1];
                         System.out.println(c);
-                         gameController.playedCard(c);
+                        gameController.playedCard(c);
                     } else if (msg.startsWith("PLAYER_DRAW_CARD:")) {
-
                         String payload = msg.split(":")[1];
                         String[] parts = payload.split("-");
                         Rank rank = Rank.valueOf(parts[0]);
                         Suit suit = Suit.valueOf(parts[1]);
                         ServerCard newCard = new ServerCard(suit, rank);
                         gameController.onCardDrawn(newCard);
+                    } else if (msg.startsWith("PLAYERS:")) {
+                        clientInfoOnWait = msg.substring("PLAYERS:".length()).split(";");
                     } else if (msg.startsWith("count:")) {
                         String[] counts = msg.split(":")[1].split(",");
-                        Platform.runLater(() -> {waitingRoomController.setClientCount(Integer.parseInt(counts[0]), Integer.parseInt(counts[1]));});
+                        Platform.runLater(() -> {
+                            waitingRoomController.setClientCount(Integer.parseInt(counts[0]), Integer.parseInt(counts[1]));
+                            if(Integer.parseInt(counts[0]) == Integer.parseInt(counts[1])) waitingRoomController.blockReady();
+                        });
                     }
                 }
             } catch (IOException e) {

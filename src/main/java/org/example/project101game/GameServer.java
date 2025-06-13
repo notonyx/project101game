@@ -22,6 +22,23 @@ public class GameServer extends Thread {
     private int readyCount = 0;
     private final WaitingRoomController waitingRoomController;
 
+    @Override
+    public void interrupt() {
+        clients.forEach(o -> {
+            try{
+                o.socket.close();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        });
+        try{
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.interrupt();
+    }
+
     private void initializeDeck() {
         deck = new ArrayList<>();
         for (Suit suit : Suit.values()) {
@@ -97,8 +114,28 @@ public class GameServer extends Thread {
         }, 3000);
     }
 
+    public void sendNamesAndAvatars(){
+        StringBuilder clInfo = new StringBuilder();
+        for (ClientHandler client : clients) {
+            clInfo.append(String.format("%s:%s,", client.clientName, String.valueOf(client.pfp)));
+        }
+        clInfo.deleteCharAt(clInfo.length()-1);
+        clients.forEach(c -> {
+            try {
+                c.out.writeUTF("PLAYERS:" + clients.indexOf(c) + ";" + clInfo.toString());
+                c.out.flush();
+                System.out.println("Player info sent: " + "PLAYERS:" + clients.indexOf(c) + ";" + clInfo.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public void startGame() {
         // 1) Подготовка колоды и раздача
+
+        sendNamesAndAvatars();
+
         initializeDeck(); // рандомно генерируемая колода
         List<String> playerIds = clients.stream()
                 .map(c -> c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort())))
@@ -293,6 +330,7 @@ public class GameServer extends Thread {
         private DataOutputStream out;
         boolean isReady = false;
         private String clientName = "";
+        private byte pfp = 0;
 
         public ClientHandler(Socket socket, GameServer server) {
             this.socket = socket;
@@ -301,6 +339,10 @@ public class GameServer extends Thread {
 
         public void setClientName(String name){
             clientName = name;
+        }
+
+        public void setAvatar(byte id){
+            pfp = id;
         }
 
         public void setReady(boolean ready) {
@@ -326,7 +368,16 @@ public class GameServer extends Thread {
                         System.out.println("Игрок НЕ готов: " + socket.getInetAddress());
                         server.decrementReadyCount();
                         server.checkAllReady();
-                    } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
+                    } else if (message.startsWith("PLAYER_SET_NAME")) {
+                        System.out.println("Игрок сменил имя " + socket.getInetAddress());
+                        String[] newName = message.split(":");
+                        setClientName(newName[1]);
+                    }
+                    else if (message.startsWith("PLAYER_SET_AVATAR")) {
+                        System.out.println("Игрок сменил аватар " + socket.getInetAddress());
+                        setAvatar(Byte.parseByte(message.split(":")[1]));
+                    }
+                    else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
                         server.sentPlayedCard(message);
                         server.advanceTurn();
