@@ -189,6 +189,10 @@ public class GameController {
             final int cardIndex = i;
             cardView.setOnMouseClicked(event -> {
                 // Играем карту - перемещаем в сброс
+                if (!isMyTurn) {
+                    System.out.println("Не ваш ход, нельзя играть карту.");
+                    return;
+                }
                 Card playedCard = playerHandCards.remove(cardIndex);
 
                 this.client.sendPlayCard(card);
@@ -258,6 +262,10 @@ public class GameController {
             playerHandCards.add(new Card(sc.getSuit(), sc.getRank(), img));
         }
         deckView.setOnMouseClicked(event -> {
+            if (!isMyTurn) {
+                System.out.println("Не ваш ход, нельзя брать карту.");
+                return;
+            }
             // Отправляем серверу запрос на взятие карты
             client.sendDrawCard();
 

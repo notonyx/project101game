@@ -165,6 +165,7 @@ public class GameServer extends Thread {
         String currentPlayerId = clients.get(currentPlayerIndex)
                 .socket.getInetAddress().getHostAddress();
         String msg = "turn:" + currentPlayerId;
+        System.out.println(msg);
         for (ClientHandler c : clients) {
             sendMessageToClient(
                     c.socket.getInetAddress().getHostAddress(),
