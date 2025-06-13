@@ -90,7 +90,9 @@ public class GameServer extends Thread {
     public void startGame() {
         // 1) Подготовка колоды и раздача
         initializeDeck(); // рандомно генерируемая колода
-        List<String> playerIds = clients.stream().map(c -> c.socket.getInetAddress().getHostAddress()).toList();
+        List<String> playerIds = clients.stream()
+                .map(c -> c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort())))
+                .toList();
         dealCards(playerIds, 5);
 
         // 2) Логирование раздачи
@@ -108,9 +110,9 @@ public class GameServer extends Thread {
 
         // 4) Отправляем сначала руки всем
         for (ClientHandler c : clients) {
-            String ip = c.socket.getInetAddress().getHostAddress();
+            String id = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort()));
             try {
-                sendInitialHandToPlayer(ip, playerHands.get(ip));
+                sendInitialHandToPlayer(id, playerHands.get(id));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -118,15 +120,15 @@ public class GameServer extends Thread {
 
         // 5) Только после этого посылаем START_GAME всем
         for (ClientHandler c : clients) {
-            String ip = c.socket.getInetAddress().getHostAddress();
+            String id = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort()));
             try {
                 String turnMsg = "turn:" + firstPlayer;
                 c.out.writeUTF(turnMsg);
                 c.out.flush();
-                System.out.println("Отправлено " + turnMsg + " клиенту: " + ip);
+                System.out.println("Отправлено " + turnMsg + " клиенту: " + id);
                 c.out.writeUTF("START_GAME");
                 c.out.flush();
-                System.out.println("Отправлено START_GAME клиенту: " + ip);
+                System.out.println("Отправлено START_GAME клиенту: " + id);
                 // и сразу уведомляем о ходе
 
             } catch (IOException e) {
@@ -137,11 +139,15 @@ public class GameServer extends Thread {
 
     // уведомить всех, чей сейчас ход
     private void notifyTurnToAll() {
-        String currentPlayerId = clients.get(currentPlayerIndex).socket.getInetAddress().getHostAddress();
+        String currentPlayerId = clients.get(currentPlayerIndex)
+                .socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
         String msg = "turn:" + currentPlayerId;
         System.out.println(msg);
         for (ClientHandler c : clients) {
-            sendMessageToClient(c.socket.getInetAddress().getHostAddress(), msg);
+            sendMessageToClient(
+                    c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort())),
+                    msg
+            );
         }
     }
 
@@ -166,13 +172,13 @@ public class GameServer extends Thread {
 
     private void sendMessageToClient(String playerId, String message) {
         for (ClientHandler c : clients) {
-            String ip = c.socket.getInetAddress().getHostAddress();
-            if (ip.equals(playerId)) {
+            String id = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort()));
+            if (id.equals(playerId)) {
                 try {
                     c.out.writeUTF(message);
                     c.out.flush();
                 } catch (IOException e) {
-                    System.err.println("Ошибка отправки " + message + " клиенту " + ip);
+                    System.err.println("Ошибка отправки " + message + " клиенту " + id);
                 }
                 break;
             }
@@ -181,11 +187,11 @@ public class GameServer extends Thread {
 
     private void sentPlayedCard(String message) {
         for (ClientHandler c : clients) {
-            String ip = c.socket.getInetAddress().getHostAddress();
+            String id = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort()));
             try {
                 c.out.writeUTF(message);
                 c.out.flush();
-                System.out.println("Отправлено " + message + " клиенту: " + ip);
+                System.out.println("Отправлено " + message + " клиенту: " + id);
                 // и сразу уведомляем о ходе
 
             } catch (IOException e) {
