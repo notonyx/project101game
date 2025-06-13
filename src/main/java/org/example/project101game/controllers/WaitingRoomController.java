@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.project101game.GameClient;
 import org.example.project101game.GameServer;
@@ -34,7 +35,7 @@ public class WaitingRoomController {
     @FXML private Button readyButton;
     @FXML private GridPane avatarGrid;
     @FXML private Label readyLabel;
-    @FXML private BorderPane rootPane;
+    @FXML private StackPane rootPane;
     @FXML private Button backToMenuButton;
 
 
@@ -156,7 +157,7 @@ public class WaitingRoomController {
     }
 
     public void setClientAndServer(GameClient client, GameServer server, boolean isHost) {
-        this.gameClient = client;
+        this.setGameClient(client);
         this.gameServer = server;
         this.isHost = isHost;
     }

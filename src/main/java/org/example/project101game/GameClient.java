@@ -143,7 +143,7 @@ public class GameClient {
                     } else if (msg.startsWith("PLAYER_PLAY_CARD:")) {
                         String c = msg.split(":")[1];
                         System.out.println(c);
-                        gameController.playedCard(c);
+                         gameController.playedCard(c);
                     } else if (msg.startsWith("PLAYER_DRAW_CARD:")) {
 
                         String payload = msg.split(":")[1];
