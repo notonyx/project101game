@@ -270,6 +270,15 @@ public class GameServer extends Thread {
         System.out.println("Карта отправлена в сброс: " + playedCard);
     }
 
+    public synchronized void removeClient(ClientHandler  handler)
+    {
+        clients.remove(handler);
+        clientsCount--;
+        if (handler.isReady)
+            readyCount--;
+        sendUpdateClients();
+    }
+
 
     public ServerCard getTopDiscardCard() { // возможно проблемы с тем как хранится карта, на всякий случай лучше проверить че там
         if (discardPile.isEmpty()) return null;
@@ -325,6 +334,8 @@ public class GameServer extends Thread {
                     } else if ("PLAYER_DRAW_CARD".equals(message)) {
                         System.out.println("Игрок взял карту " + socket.getInetAddress());
                         server.handleDrawCard(this); // Обработать взятие карты
+                    } else if ("PLAYER_DISCONNECT".equals(message)) {
+                        server.removeClient(this);
                     }
                 }
 

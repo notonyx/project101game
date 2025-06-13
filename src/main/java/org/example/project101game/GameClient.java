@@ -111,6 +111,15 @@ public class GameClient {
         }
     }
 
+    public void sendDisconnect() {
+        try {
+            out.writeUTF("PLAYER_DISCONNECT");
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void listenToServer() {
         new Thread(() -> {
             try {

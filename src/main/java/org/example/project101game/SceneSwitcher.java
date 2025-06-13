@@ -14,16 +14,25 @@ import java.io.IOException;
 public class SceneSwitcher {
     private static Stage stage;
 
+    public static GameClient client;
+
+    public static Stage getStage(){
+        return stage;
+    }
     public static void setStage(Stage primaryStage) {
         stage = primaryStage;
+        stage.setOnCloseRequest((e) -> {
+            if (client != null)
+                client.sendDisconnect();
+            System.exit(0);
+        });
+        stage.setMaximized(true);
     }
 
     public static void switchTo(String fxmlFile) {
         try {
             Parent root = FXMLLoader.load(SceneSwitcher.class.getResource(fxmlFile));
-            Rectangle2D d = Screen.getPrimary().getBounds();
-            stage.setScene(new Scene(root, d.getWidth(), d.getHeight()));
-            stage.setMaximized(true);
+            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

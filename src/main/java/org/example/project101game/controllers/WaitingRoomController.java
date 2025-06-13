@@ -194,6 +194,7 @@ public class WaitingRoomController {
     }
 
     public void onBackToMenuClick(){
+        gameClient.sendDisconnect();
         if(gameServer!=null) gameServer.interrupt();
         try {
             gameClient.getSocket().close();
