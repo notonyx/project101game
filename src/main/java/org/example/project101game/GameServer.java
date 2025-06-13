@@ -237,6 +237,7 @@ public class GameServer extends Thread {
         String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
         sendMessageToClient(playerId, msg);
         System.out.println("Игрок " + playerId + " получил карту: " + msg);
+        advanceTurn();
     }
 
     private static class ClientHandler extends Thread {
@@ -275,6 +276,7 @@ public class GameServer extends Thread {
                     } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
                         server.sentPlayedCard(message);
+                        server.advanceTurn();
                     } else if ("PLAYER_DRAW_CARD".equals(message)) {
                         System.out.println("Игрок взял карту " + socket.getInetAddress());
                         server.handleDrawCard(this); // Обработать взятие карты
