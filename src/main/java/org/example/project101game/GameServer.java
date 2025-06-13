@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
