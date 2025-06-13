@@ -35,7 +35,7 @@
               <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                   <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-font-size: 34px; -fx-background-color: rgba(126, 175, 168, 1); -fx-padding: 5 10 5 10; -fx-font-weight: bold; -fx-background-radius: 10 10 0 0;" text="ЖДУТ" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
    
-                  <Label fx:id="readyLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-font-size: 30px; -fx-background-color: white; -fx-padding: 5 10 5 10; -fx-text-fill: #7eafa8; -fx-background-radius: 0 0 10 10; -fx-font-weight: bold;" text="2 / 4" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                  <Label fx:id="readyLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-font-size: 30px; -fx-background-color: white; -fx-padding: 5 10 5 10; -fx-text-fill: #7eafa8; -fx-background-radius: 0 0 10 10; -fx-font-weight: bold;" text="1 / 4" textAlignment="CENTER" VBox.vgrow="ALWAYS">
                       <VBox.margin>
                           <Insets />
                       </VBox.margin>
