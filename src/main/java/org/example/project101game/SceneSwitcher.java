@@ -14,12 +14,18 @@ import java.io.IOException;
 public class SceneSwitcher {
     private static Stage stage;
 
+    public static GameClient client;
+
     public static Stage getStage(){
         return stage;
     }
     public static void setStage(Stage primaryStage) {
         stage = primaryStage;
-        stage.setOnCloseRequest((e) -> System.exit(0));
+        stage.setOnCloseRequest((e) -> {
+            if (client != null)
+                client.sendDisconnect();
+            System.exit(0);
+        });
         stage.setMaximized(true);
     }
 

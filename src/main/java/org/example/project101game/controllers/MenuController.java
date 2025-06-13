@@ -64,6 +64,7 @@ public class MenuController {
             server.start(); // Запуск сервера
             GameClient client = new GameClient();
             while (!client.connect("localhost", port));
+            SceneSwitcher.client = client;
             controller.setMyClientId(client.getMyClientId());
             controller.setClientAndServer(client, server, true);  // клиент = null, сервер = server, isHost = true
 
@@ -85,6 +86,7 @@ public class MenuController {
 
             GameClient client = new GameClient();
             if (client.connect(hostIP, port)) {
+                SceneSwitcher.client = client;
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/waiting-room.fxml"));
                 Parent root = loader.load();
 
