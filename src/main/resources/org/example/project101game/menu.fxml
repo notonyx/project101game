@@ -1,62 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.MenuController">
+<AnchorPane minHeight="480.0" minWidth="640.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.project101game.controllers.MenuController">
 
-    <!-- Фоновое изображение -->
-    <ImageView fitHeight="1080" fitWidth="1920">
+          <!-- Фоновое изображение -->
+    <ImageView fitHeight="1080.0" fitWidth="1920.0" nodeOrientation="INHERIT">
         <image>
             <Image url="@menu.png" />
         </image>
     </ImageView>
+   <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="25.0">
+      <children>
+         <HBox alignment="CENTER">
+            <children>
 
-    <!-- Заголовок -->
-    <Label layoutX="237.0" layoutY="117.0" style="-fx-font-size: 70px; -fx-font-weight: bold; -fx-text-fill: white;" text="Представляем вам игру..." AnchorPane.leftAnchor="237.0" AnchorPane.topAnchor="117.0">
-        <font>
-            <Font name="Prosto One" size="36.0" />
-        </font></Label>
+                <!-- Заголовок -->
+                <Label style="-fx-font-size: 70px; -fx-font-weight: bold; -fx-text-fill: white;" text="Представляем вам игру...">
+                    <font>
+                        <Font name="Prosto One" size="36.0" />
+                    </font>
+               </Label>
+               <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
 
-    <!-- Число 101 -->
-    <Label layoutX="1383.0" layoutY="47.0" style="-fx-font-size: 200px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Prosto One';" text="101" AnchorPane.rightAnchor="213.0" AnchorPane.topAnchor="47.0" />
+                <!-- Число 101 -->
+                <Label alignment="CENTER_RIGHT" style="-fx-font-size: 200px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Prosto One';" text="101" />
+               <Separator maxWidth="60.0" opacity="0.0" HBox.hgrow="ALWAYS" />
+            </children>
+         </HBox>
+         <Separator opacity="0.0" orientation="VERTICAL" VBox.vgrow="ALWAYS" />
+         <HBox alignment="BOTTOM_RIGHT">
+            <children>
+               <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
 
-    <!-- Блок управления -->
-    <VBox prefWidth="650.0" spacing="20" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="50.0">
+                <!-- Блок управления -->
+                <VBox alignment="CENTER_RIGHT" fillWidth="false" spacing="20" HBox.hgrow="ALWAYS">
 
-        <!-- Поле ввода кода комнаты -->
-        <TextField fx:id="ipPortField" onAction="#onJoinClick" prefHeight="110.0" prefWidth="650.0" promptText="ip-адрес:порт" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(244, 244, 244, 1);">
-            <VBox.margin>
-                <Insets bottom="30.0" />
-            </VBox.margin>
-        </TextField>
+                    <!-- Поле ввода кода комнаты -->
+                    <TextField fx:id="ipPortField" maxWidth="-Infinity" onAction="#onJoinClick" prefHeight="110.0" prefWidth="650.0" promptText="ip-адрес:порт" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(244, 244, 244, 1);">
+                        <VBox.margin>
+                            <Insets bottom="30.0" />
+                        </VBox.margin>
+                    </TextField>
 
-        <!-- Кнопка присоединения -->
-        <Button onAction="#onJoinClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="присоединиться">
-            <VBox.margin>
-                <Insets bottom="30.0" />
-            </VBox.margin>
-        </Button>
+                    <!-- Кнопка присоединения -->
+                    <Button onAction="#onJoinClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="присоединиться">
+                        <VBox.margin>
+                            <Insets bottom="30.0" />
+                        </VBox.margin>
+                    </Button>
 
-        <!-- Кнопка создания комнаты -->
-        <Button onAction="#onCreateRoomClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="создать комнату">
-            <VBox.margin>
-                <Insets bottom="30.0" />
-            </VBox.margin>
-        </Button>
+                    <!-- Кнопка создания комнаты -->
+                    <Button onAction="#onCreateRoomClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="создать комнату">
+                        <VBox.margin>
+                            <Insets bottom="30.0" />
+                        </VBox.margin>
+                    </Button>
 
-        <!-- Кнопка настроек -->
-        <Button onAction="#onSettingsClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="настройки">
-            <VBox.margin>
-                <Insets bottom="20.0" />
-            </VBox.margin>
-        </Button>
-    </VBox>
+                    <!-- Кнопка настроек -->
+                    <Button onAction="#onSettingsClick" prefHeight="110.0" prefWidth="650.0" style="-fx-font-weight: bold; -fx-font-size: 40px; -fx-background-radius: 15; -fx-background-color: rgba(234, 235, 167, 1); -fx-text-fill: black;" text="настройки">
+                        <VBox.margin>
+                            <Insets bottom="20.0" />
+                        </VBox.margin>
+                    </Button>
+                </VBox>
+            </children>
+         </HBox>
+      </children>
+   </VBox>
 </AnchorPane>
