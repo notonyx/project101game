@@ -15,7 +15,7 @@ public class GameServer extends Thread {
     private List<ClientHandler> clients = new ArrayList<>();
     private List<ServerCard> deck;  // приватное поле для колоды
     private Map<String, List<ServerCard>> playerHands = new HashMap<>(); // руки клиентов
-
+    private List<ServerCard> discardPile = new ArrayList<>(); // сброс
     private int currentPlayerIndex = 0; // index игрока чей ход
 
 
@@ -39,44 +39,6 @@ public class GameServer extends Thread {
         }
     }
 
-    public void sendInitialHandsToPlayers(Map<String, List<ServerCard>> playerHands) {
-        for (Map.Entry<String, List<ServerCard>> entry : playerHands.entrySet()) {
-            String playerId = entry.getKey();
-            List<ServerCard> hand = entry.getValue();
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("hand:");
-
-            for (int i = 0; i < hand.size(); i++) {
-                ServerCard card = hand.get(i);
-                // Формируем строку вида "RANK-SUIT"
-                sb.append(card.getRank().name()).append("-").append(card.getSuit().name());
-                if (i < hand.size() - 1) {
-                    sb.append(",");
-                }
-            }
-//            sendMessageToClient(playerId, sb.toString());
-        }
-    }
-
-    @Override
-    public void interrupt() {
-        try{
-            clients.forEach((a) -> {
-                try {
-                    a.socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            serverSocket.close();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-        super.interrupt();
-    }
-
     public GameServer(int port) {
         this.port = port;
     }
@@ -89,8 +51,7 @@ public class GameServer extends Thread {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Новый клиент подключен с IP: " +
-                        clientSocket.getInetAddress() + ", порт: " + clientSocket.getPort());
+                System.out.println("Новый клиент подключен с IP: " + clientSocket.getInetAddress() + ", порт: " + clientSocket.getPort());
                 ClientHandler client = new ClientHandler(clientSocket, this);
                 clients.add(client);
                 client.start();
@@ -129,17 +90,14 @@ public class GameServer extends Thread {
     public void startGame() {
         // 1) Подготовка колоды и раздача
         initializeDeck(); // рандомно генерируемая колода
-        List<String> playerIds = clients.stream()
-                .map(c -> c.socket.getInetAddress().getHostAddress())
-                .toList();
+        List<String> playerIds = clients.stream().map(c -> c.socket.getInetAddress().getHostAddress()).toList();
         dealCards(playerIds, 5);
 
         // 2) Логирование раздачи
         System.out.println("=== Раздача карт ===");
         playerHands.forEach((playerId, hand) -> {
             System.out.print("Игрок " + playerId + " получает: ");
-            hand.forEach(card ->
-                    System.out.print(card.getRank() + "-" + card.getSuit() + " "));
+            hand.forEach(card -> System.out.print(card.getRank() + "-" + card.getSuit() + " "));
             System.out.println();
         });
 
@@ -179,14 +137,11 @@ public class GameServer extends Thread {
 
     // уведомить всех, чей сейчас ход
     private void notifyTurnToAll() {
-        String currentPlayerId = clients.get(currentPlayerIndex)
-                .socket.getInetAddress().getHostAddress();
+        String currentPlayerId = clients.get(currentPlayerIndex).socket.getInetAddress().getHostAddress();
         String msg = "turn:" + currentPlayerId;
+        System.out.println(msg);
         for (ClientHandler c : clients) {
-            sendMessageToClient(
-                    c.socket.getInetAddress().getHostAddress(),
-                    msg
-            );
+            sendMessageToClient(c.socket.getInetAddress().getHostAddress(), msg);
         }
     }
 
@@ -200,9 +155,7 @@ public class GameServer extends Thread {
         StringBuilder sb = new StringBuilder("hand:");
         for (int i = 0; i < hand.size(); i++) {
             ServerCard card = hand.get(i);
-            sb.append(card.getRank().name())
-                    .append("-")
-                    .append(card.getSuit().name());
+            sb.append(card.getRank().name()).append("-").append(card.getSuit().name());
             if (i < hand.size() - 1) sb.append(",");
         }
         String msg = sb.toString();
@@ -243,9 +196,22 @@ public class GameServer extends Thread {
 
     private void handleDrawCard(ClientHandler handler) {
         String playerId = handler.socket.getInetAddress().getHostAddress();
-        if (deck.isEmpty()) {
-//            sendMessageToClient(playerId, "DRAW_CARD:EMPTY");
-            return;
+        if (deck.isEmpty() && discardPile.size() > 1) {
+            // Сохраняем последнюю карту
+            ServerCard topCard = discardPile.get(discardPile.size() - 1);
+
+            // Забираем остальные карты и замешиваем
+            List<ServerCard> reshuffled = new ArrayList<>(discardPile.subList(0, discardPile.size() - 1));
+            Collections.shuffle(reshuffled);
+
+            // Обновляем колоду
+            deck.addAll(reshuffled);
+
+            // Оставляем только последнюю карту в сбросе
+            discardPile.clear();
+            discardPile.add(topCard);
+
+            System.out.println("Колода была пуста. Сброс перемешан обратно в колоду.");
         }
 
         ServerCard drawnCard = deck.remove(0);
@@ -254,7 +220,25 @@ public class GameServer extends Thread {
         String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
         sendMessageToClient(playerId, msg);
         System.out.println("Игрок " + playerId + " получил карту: " + msg);
+        advanceTurn();
     }
+
+    private void addCardToDiscardPile(String message) {
+        String cardStr = message.replace("PLAYER_PLAY_CARD:", "").trim();
+        String[] parts = cardStr.split(" ");
+        Rank rank = Rank.fromSymbol(parts[0]);
+        Suit suit = Suit.fromSymbol(parts[1]);
+        ServerCard playedCard = new ServerCard(suit, rank);
+        discardPile.add(playedCard);
+        System.out.println("Карта отправлена в сброс: " + playedCard);
+    }
+
+
+    public ServerCard getTopDiscardCard() { // возможно проблемы с тем как хранится карта, на всякий случай лучше проверить че там
+        if (discardPile.isEmpty()) return null;
+        return discardPile.get(discardPile.size() - 1);
+    }
+
 
     private static class ClientHandler extends Thread {
         private Socket socket;
@@ -297,6 +281,8 @@ public class GameServer extends Thread {
                     } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
                         server.sentPlayedCard(message);
+                        server.advanceTurn();
+                        server.addCardToDiscardPile(message);
                     } else if ("PLAYER_DRAW_CARD".equals(message)) {
                         System.out.println("Игрок взял карту " + socket.getInetAddress());
                         server.handleDrawCard(this); // Обработать взятие карты

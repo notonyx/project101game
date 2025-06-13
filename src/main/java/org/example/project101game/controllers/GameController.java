@@ -7,35 +7,32 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.project101game.GameClient;
 import org.example.project101game.SceneSwitcher;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
-
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.paint.Color;
-import javafx.scene.image.WritableImage;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.text.Font;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.example.project101game.models.Card;
 import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameController {
 
@@ -58,6 +55,7 @@ public class GameController {
     private List<Card> playerHandCards = new ArrayList<>();
     private List<Card> discardPile = new ArrayList<>();
     private GameClient client;
+    private boolean isMyTurn;
 
     @FXML
     protected void onBackClick() {
@@ -85,6 +83,10 @@ public class GameController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setIsMyTurn(boolean myTurn) {
+        isMyTurn = myTurn;
     }
 
     private void loadAvatars() {
@@ -187,6 +189,10 @@ public class GameController {
             final int cardIndex = i;
             cardView.setOnMouseClicked(event -> {
                 // Играем карту - перемещаем в сброс
+                if (!isMyTurn) {
+                    System.out.println("Не ваш ход, нельзя играть карту.");
+                    return;
+                }
                 Card playedCard = playerHandCards.remove(cardIndex);
 
                 this.client.sendPlayCard(card);
@@ -256,6 +262,10 @@ public class GameController {
             playerHandCards.add(new Card(sc.getSuit(), sc.getRank(), img));
         }
         deckView.setOnMouseClicked(event -> {
+            if (!isMyTurn) {
+                System.out.println("Не ваш ход, нельзя брать карту.");
+                return;
+            }
             // Отправляем серверу запрос на взятие карты
             client.sendDrawCard();
 
@@ -275,9 +285,9 @@ public class GameController {
         }
 
         // 5. Обновляем статус хода
-        boolean isMyTurn = myId.equals(currentTurnId);
-        deckView.setDisable(!isMyTurn);          // если не ваш ход, нельзя брать карту
-        playerHand.setDisable(!isMyTurn);        // если не ваш ход, нельзя кликать по руке
+        setIsMyTurn(myId.equals(currentTurnId));
+        disableDeckAndPlayerHand();
+        // если не ваш ход, нельзя кликать по руке
         // Здесь можно также подсветить чей ход, например:
         if (isMyTurn) {
             System.out.println("Ваш ход!");
@@ -286,7 +296,15 @@ public class GameController {
         }
     }
 
+    public void disableDeckAndPlayerHand() {
+        deckView.setDisable(!isMyTurn);
+        playerHand.setDisable(!isMyTurn);
+    }
+
+
+
     public void onCardDrawn(ServerCard card) {
+        disableDeckAndPlayerHand();
         String suitName = card.getSuit().name().toLowerCase();
         String rankFile = card.getRank().getFileName();
         String path = String.format("/org/example/project101game/cards/%s/%s.png", suitName, rankFile);
