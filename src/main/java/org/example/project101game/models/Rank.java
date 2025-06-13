@@ -37,4 +37,21 @@ public enum Rank {
             case ACE -> "A";
         };
     }
+
+    // В enum Rank
+    public static Rank fromSymbol(String symbol) {
+        return switch (symbol) {
+            case "6" -> SIX;
+            case "7" -> SEVEN;
+            case "8" -> EIGHT;
+            case "9" -> NINE;
+            case "10" -> TEN;
+            case "J" -> JACK;
+            case "Q" -> QUEEN;
+            case "K" -> KING;
+            case "A" -> ACE;
+            default -> throw new IllegalArgumentException("Unknown rank: " + symbol);
+        };
+    }
+
 }

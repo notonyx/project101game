@@ -125,10 +125,6 @@ public class GameClient {
                     } else if (msg.startsWith("turn:")) {
                         // Формат: turn:PLAYER_ID
                         currentTurnId = msg.substring(5);
-                        System.out.println("PRISHEL HOD FROM SERVER " + msg);
-                        System.out.println("CURRENT_TURN_ID " + currentTurnId);
-                        System.out.println("MY_ID " + myClientId);
-                        System.out.println(currentTurnId.equals(myClientId));
                         if (gameController != null) {
                             gameController.setIsMyTurn(currentTurnId.equals(myClientId));
                             gameController.disableDeckAndPlayerHand();
