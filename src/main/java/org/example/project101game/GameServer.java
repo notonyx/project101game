@@ -1,5 +1,8 @@
 package org.example.project101game;
 
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import org.example.project101game.controllers.WaitingRoomController;
 import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
@@ -15,6 +18,9 @@ public class GameServer extends Thread {
     private Map<String, List<ServerCard>> playerHands = new HashMap<>(); // руки клиентов
     private List<ServerCard> discardPile = new ArrayList<>(); // сброс
     private int currentPlayerIndex = 0; // index игрока чей ход
+    private int clientsCount = 0;
+    private int readyCount = 0;
+    private final WaitingRoomController waitingRoomController;
 
     @Override
     public void interrupt() {
@@ -53,7 +59,8 @@ public class GameServer extends Thread {
         }
     }
 
-    public GameServer(int port) {
+    public GameServer(WaitingRoomController controller, int port) {
+        this.waitingRoomController = controller;
         this.port = port;
     }
 
@@ -66,6 +73,8 @@ public class GameServer extends Thread {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Новый клиент подключен с IP: " + clientSocket.getInetAddress() + ", порт: " + clientSocket.getPort());
+                clientsCount++;
+                Platform.runLater(() -> {waitingRoomController.setClientCount(readyCount, clientsCount);});
                 ClientHandler client = new ClientHandler(clientSocket, this);
                 clients.add(client);
                 client.start();
@@ -78,6 +87,10 @@ public class GameServer extends Thread {
     // Метод для установки готовности хоста (хост — первый клиент в списке)
     public synchronized void setHostReady(boolean ready) {
         if (clients.isEmpty()) return;  // если нет клиентов — ничего не делать
+        if(ready)
+            incrementReadyCount();
+        else
+            decrementReadyCount();
         ClientHandler hostClient = clients.get(0); // считаем, что хост — первый клиент
         hostClient.setReady(ready);
         System.out.println("Хост готов: " + ready);
@@ -151,6 +164,17 @@ public class GameServer extends Thread {
         }
     }
 
+    public void sendUpdateClients() {
+        for (ClientHandler c : clients) {
+            try {
+                c.out.writeUTF("count:" + readyCount + "," + clientsCount);
+                c.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // уведомить всех, чей сейчас ход
     private void notifyTurnToAll() {
         String currentPlayerId = clients.get(currentPlayerIndex)
@@ -215,7 +239,7 @@ public class GameServer extends Thread {
     }
 
     private void handleDrawCard(ClientHandler handler) {
-        String playerId = handler.socket.getInetAddress().getHostAddress();
+        String playerId = handler.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
         if (deck.isEmpty() && discardPile.size() > 1) {
             // Сохраняем последнюю карту
             ServerCard topCard = discardPile.get(discardPile.size() - 1);
@@ -243,6 +267,16 @@ public class GameServer extends Thread {
         advanceTurn();
     }
 
+    public synchronized void incrementReadyCount(){
+        readyCount++;
+        sendUpdateClients();
+    }
+
+    public synchronized void decrementReadyCount() {
+        readyCount--;
+        sendUpdateClients();
+    }
+
     private void addCardToDiscardPile(String message) {
         String cardStr = message.replace("PLAYER_PLAY_CARD:", "").trim();
         String[] parts = cardStr.split(" ");
@@ -251,6 +285,15 @@ public class GameServer extends Thread {
         ServerCard playedCard = new ServerCard(suit, rank);
         discardPile.add(playedCard);
         System.out.println("Карта отправлена в сброс: " + playedCard);
+    }
+
+    public synchronized void removeClient(ClientHandler  handler)
+    {
+        clients.remove(handler);
+        clientsCount--;
+        if (handler.isReady)
+            readyCount--;
+        sendUpdateClients();
     }
 
 
@@ -287,16 +330,18 @@ public class GameServer extends Thread {
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
 
-
+                server.sendUpdateClients();
                 while (true) {
                     String message = in.readUTF();
                     if ("PLAYER_READY".equals(message)) {
                         setReady(true);
                         System.out.println("Игрок готов: " + socket.getInetAddress());
+                        server.incrementReadyCount();
                         server.checkAllReady();
                     } else if ("PLAYER_NOT_READY".equals(message)) {
                         setReady(false);
                         System.out.println("Игрок НЕ готов: " + socket.getInetAddress());
+                        server.decrementReadyCount();
                         server.checkAllReady();
                     } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
@@ -306,6 +351,8 @@ public class GameServer extends Thread {
                     } else if ("PLAYER_DRAW_CARD".equals(message)) {
                         System.out.println("Игрок взял карту " + socket.getInetAddress());
                         server.handleDrawCard(this); // Обработать взятие карты
+                    } else if ("PLAYER_DISCONNECT".equals(message)) {
+                        server.removeClient(this);
                     }
                 }
 

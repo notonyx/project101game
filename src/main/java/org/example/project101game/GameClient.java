@@ -1,6 +1,7 @@
 package org.example.project101game;
 
 
+import javafx.application.Platform;
 import org.example.project101game.controllers.GameController;
 import org.example.project101game.controllers.WaitingRoomController;
 import org.example.project101game.models.Card;
@@ -110,6 +111,15 @@ public class GameClient {
         }
     }
 
+    public void sendDisconnect() {
+        try {
+            out.writeUTF("PLAYER_DISCONNECT");
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void listenToServer() {
         new Thread(() -> {
             try {
@@ -152,6 +162,9 @@ public class GameClient {
                         Suit suit = Suit.valueOf(parts[1]);
                         ServerCard newCard = new ServerCard(suit, rank);
                         gameController.onCardDrawn(newCard);
+                    } else if (msg.startsWith("count:")) {
+                        String[] counts = msg.split(":")[1].split(",");
+                        Platform.runLater(() -> {waitingRoomController.setClientCount(Integer.parseInt(counts[0]), Integer.parseInt(counts[1]));});
                     }
                 }
             } catch (IOException e) {
