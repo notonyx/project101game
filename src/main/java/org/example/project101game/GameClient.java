@@ -125,7 +125,10 @@ public class GameClient {
                     } else if (msg.startsWith("turn:")) {
                         // Формат: turn:PLAYER_ID
                         currentTurnId = msg.substring(5);
-                        gameController.setIsMyTurn(currentTurnId.equals(myClientId));
+                        if (gameController != null) {
+                            gameController.setIsMyTurn(currentTurnId.equals(myClientId));
+                        } else {
+                        }
                     } else if ("START_GAME".equals(msg)) {
                         // Всё готово — переключаем сцену и передаём данные
                         if (waitingRoomController != null) {
