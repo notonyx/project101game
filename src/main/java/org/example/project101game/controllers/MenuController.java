@@ -64,9 +64,7 @@ public class MenuController {
 
             WaitingRoomController controller = loader.getController();
             controller.setMyClientId(client.getMyClientId());
-            controller.setGameClient(client);
-            controller.setHost(true); // передаем, что это хост
-            controller.setClientAndServer(null, server, true);  // клиент = null, сервер = server, isHost = true
+            controller.setClientAndServer(client, server, true);  // клиент = null, сервер = server, isHost = true
 
             Stage stage = (Stage) ipPortField.getScene().getWindow();
             stage.setScene(new Scene(root));

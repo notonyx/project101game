@@ -59,6 +59,23 @@ public class GameServer extends Thread {
         }
     }
 
+    @Override
+    public void interrupt() {
+        try{
+            clients.forEach((a) -> {
+                try {
+                    a.socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            serverSocket.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        super.interrupt();
+    }
 
     public GameServer(int port) {
         this.port = port;
@@ -245,10 +262,15 @@ public class GameServer extends Thread {
         private DataInputStream in;
         private DataOutputStream out;
         boolean isReady = false;
+        private String clientName = "";
 
         public ClientHandler(Socket socket, GameServer server) {
             this.socket = socket;
             this.server = server;
+        }
+
+        public void setClientName(String name){
+            clientName = name;
         }
 
         public void setReady(boolean ready) {
