@@ -54,15 +54,16 @@ public class MenuController {
             String[] lst = ipPortField.getText().split(":");
             String hostIP = lst[0];
             int port = Integer.parseInt(lst[1]);
-            GameServer server = new GameServer(port);
-            server.start(); // Запуск сервера
-            GameClient client = new GameClient();
-            client.connect(hostIP, port); // ip в хамачи мой (хоста)
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/project101game/waiting-room.fxml"));
             Parent root = loader.load();
 
-
             WaitingRoomController controller = loader.getController();
+
+            GameServer server = new GameServer(controller, port);
+            server.start(); // Запуск сервера
+            GameClient client = new GameClient();
+            while (!client.connect("localhost", port));
             controller.setMyClientId(client.getMyClientId());
             controller.setClientAndServer(client, server, true);  // клиент = null, сервер = server, isHost = true
 
