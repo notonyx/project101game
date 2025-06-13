@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,19 +17,23 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.example.project101game.GameClient;
+import org.example.project101game.GameServer;
 import org.example.project101game.SceneSwitcher;
 import org.example.project101game.models.Card;
 import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +53,10 @@ public class GameController {
     private Circle opponent1Avatar, opponent2Avatar, opponent3Avatar;
     @FXML
     private Label opponent1Cards, opponent2Cards, opponent3Cards;
+    @FXML
+    private ImageView bgImage;
+    @FXML
+    private StackPane rootPane;
 
     private int currentPage = 0;
     private static final int CARDS_PER_PAGE = 9;
@@ -55,11 +64,18 @@ public class GameController {
     private List<Card> playerHandCards = new ArrayList<>();
     private List<Card> discardPile = new ArrayList<>();
     private GameClient client;
+    private GameServer server;
     private boolean isMyTurn;
 
     @FXML
     protected void onBackClick() {
         SceneSwitcher.switchTo("menu.fxml");
+        server.interrupt();
+        try {
+            client.getSocket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -242,11 +258,18 @@ public class GameController {
      * @param myId          ваш уникальный идентификатор (IP или UUID)
      * @param currentTurnId — чей сейчас ход (тоже тот же идентификатор)
      */
-    public void initGame(List<ServerCard> serverHand, String myId, String currentTurnId, GameClient client) {
+    public void initGame(List<ServerCard> serverHand, String myId, String currentTurnId, GameClient client, @Nullable GameServer gameServer) {
+        // fxml init: by egor
+        Stage stage = SceneSwitcher.getStage();
+        bgImage.resize(stage.getScene().getWidth(), stage.getScene().getHeight());
+        bgImage.fitHeightProperty().bind(stage.heightProperty());
+        bgImage.fitWidthProperty().bind(stage.widthProperty());
+
         // 1. Сброс старой руки и сброса
         playerHandCards.clear();
         discardPile.clear();
         this.client = client;
+        this.server = gameServer;
 
         // 2. Преобразуем ServerCard → Card (с Image) и заполняем playerHandCards
         for (ServerCard sc : serverHand) {

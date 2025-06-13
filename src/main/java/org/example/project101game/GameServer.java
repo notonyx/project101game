@@ -1,6 +1,5 @@
 package org.example.project101game;
 
-import javafx.scene.image.Image;
 import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
@@ -17,6 +16,22 @@ public class GameServer extends Thread {
     private List<ServerCard> discardPile = new ArrayList<>(); // сброс
     private int currentPlayerIndex = 0; // index игрока чей ход
 
+    @Override
+    public void interrupt() {
+        clients.forEach(o -> {
+            try{
+                o.socket.close();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        });
+        try{
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.interrupt();
+    }
 
     private void initializeDeck() {
         deck = new ArrayList<>();

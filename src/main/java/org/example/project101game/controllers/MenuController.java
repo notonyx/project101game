@@ -2,7 +2,9 @@ package org.example.project101game.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.image.ImageView;
 import org.example.project101game.GameClient;
 import org.example.project101game.GameServer;
 import org.example.project101game.SceneSwitcher;
@@ -14,15 +16,27 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.scene.control.TextField;
 
 
 
-public class MenuController {
+public class MenuController implements Initializable {
 
     @FXML
     private TextField ipPortField; // Поле для IP хоста
+    @FXML
+    private ImageView mainMenuBg;
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle){
+        Stage stage = SceneSwitcher.getStage();
+        mainMenuBg.resize(stage.getWidth(), stage.getHeight());
+        mainMenuBg.fitWidthProperty().bind(stage.widthProperty());
+        mainMenuBg.fitHeightProperty().bind(stage.heightProperty());
+    }
 
     @FXML
     private void onSettingsClick(ActionEvent event) {
@@ -113,5 +127,4 @@ public class MenuController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 }

@@ -211,7 +211,7 @@ public class WaitingRoomController {
                         getClass().getResource("/org/example/project101game/game.fxml"));
                 Parent root = loader.load();
                 GameController gc = loader.getController();
-                gc.initGame(hand, myClientId, currentTurnId, client);
+                gc.initGame(hand, myClientId, currentTurnId, client, gameServer);
                 client.setGameController(gc);
                 Stage stage = (Stage) rootPane.getScene().getWindow();
                 stage.setScene(new Scene(root));
