@@ -286,8 +286,8 @@ public class GameController {
 
         // 5. Обновляем статус хода
         setIsMyTurn(myId.equals(currentTurnId));
-        deckView.setDisable(!isMyTurn);          // если не ваш ход, нельзя брать карту
-        playerHand.setDisable(!isMyTurn);        // если не ваш ход, нельзя кликать по руке
+        disableDeckAndPlayerHand();
+        // если не ваш ход, нельзя кликать по руке
         // Здесь можно также подсветить чей ход, например:
         if (isMyTurn) {
             System.out.println("Ваш ход!");
@@ -296,11 +296,15 @@ public class GameController {
         }
     }
 
+    public void disableDeckAndPlayerHand() {
+        deckView.setDisable(!isMyTurn);
+        playerHand.setDisable(!isMyTurn);
+    }
+
 
 
     public void onCardDrawn(ServerCard card) {
-        deckView.setDisable(!isMyTurn);
-        playerHand.setDisable(!isMyTurn);
+        disableDeckAndPlayerHand();
         String suitName = card.getSuit().name().toLowerCase();
         String rankFile = card.getRank().getFileName();
         String path = String.format("/org/example/project101game/cards/%s/%s.png", suitName, rankFile);

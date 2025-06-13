@@ -131,6 +131,8 @@ public class GameClient {
                         System.out.println(currentTurnId.equals(myClientId));
                         if (gameController != null) {
                             gameController.setIsMyTurn(currentTurnId.equals(myClientId));
+                            gameController.disableDeckAndPlayerHand();
+
                         } else {
                         }
                     } else if ("START_GAME".equals(msg)) {
