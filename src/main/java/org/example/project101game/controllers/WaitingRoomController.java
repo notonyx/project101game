@@ -46,11 +46,6 @@ public class WaitingRoomController {
     boolean isHost = false;
     private boolean isReady = false; // по умолчанию — не готов
 
-    private GameClient gameClient; // для клиентов
-    private GameServer gameServer; // только для хоста
-
-    boolean isHost = false;
-    private boolean isReady = false; // по умолчанию — не готов
 
     private static String roomCode = "0000";
 
