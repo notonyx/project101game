@@ -44,7 +44,7 @@ public class GameClient {
     public boolean connect(String hostIP, int port) {
         try {
             socket = new Socket(hostIP, port);
-            myClientId = socket.getLocalAddress().getHostAddress();
+            myClientId = socket.getLocalAddress().getHostAddress().concat(":").concat(String.valueOf(socket.getLocalPort()));
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
