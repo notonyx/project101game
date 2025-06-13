@@ -15,4 +15,15 @@ public enum Suit {
             case SPADES -> "♠";
         };
     }
+    // В enum Suit
+    public static Suit fromSymbol(String symbol) {
+        return switch (symbol) {
+            case "♥" -> HEARTS;
+            case "♦" -> DIAMONDS;
+            case "♣" -> CLUBS;
+            case "♠" -> SPADES;
+            default -> throw new IllegalArgumentException("Unknown suit: " + symbol);
+        };
+    }
+
 }

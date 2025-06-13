@@ -1,6 +1,12 @@
 package org.example.project101game.controllers;
 
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.example.project101game.GameClient;
 import org.example.project101game.GameServer;
 import org.example.project101game.SceneSwitcher;
@@ -11,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
+import org.example.project101game.models.ServerCard;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,6 +34,17 @@ public class WaitingRoomController {
     @FXML private Button readyButton;
     @FXML private GridPane avatarGrid;
     @FXML private Label readyLabel;
+    @FXML private BorderPane rootPane;
+
+
+    private GameClient gameClient; // для клиентов
+    private GameServer gameServer; // только для хоста
+    private String myClientId;
+
+
+
+    boolean isHost = false;
+    private boolean isReady = false; // по умолчанию — не готов
 
     private GameClient gameClient; // для клиентов
     private GameServer gameServer; // только для хоста
@@ -51,6 +69,14 @@ public class WaitingRoomController {
         this.isHost = isHost;
     }
 
+    public void setGameClient(GameClient client) {
+        this.gameClient = client;
+        this.gameClient.setWaitingRoomController(this);
+    }
+
+    public void setMyClientId(String clientId) {
+        this.myClientId = clientId;
+    }
 
     @FXML
     public void initialize() {
@@ -170,4 +196,25 @@ public class WaitingRoomController {
         Random random = new Random();
         return randomNames.get(random.nextInt(randomNames.size()));
     }
+
+    // В WaitingRoomController:
+    public void onStartGameReceived(List<ServerCard> hand, String currentTurnId, GameClient client) {
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/org/example/project101game/game.fxml"));
+                Parent root = loader.load();
+                GameController gc = loader.getController();
+                gc.initGame(hand, myClientId, currentTurnId, client);
+                client.setGameController(gc);
+                Stage stage = (Stage) rootPane.getScene().getWindow();
+                stage.setScene(new Scene(root));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+
 }

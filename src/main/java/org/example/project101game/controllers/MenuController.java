@@ -63,6 +63,8 @@ public class MenuController {
 
 
             WaitingRoomController controller = loader.getController();
+            controller.setMyClientId(client.getMyClientId());
+            controller.setGameClient(client);
             controller.setHost(true); // передаем, что это хост
             controller.setClientAndServer(null, server, true);  // клиент = null, сервер = server, isHost = true
 
@@ -88,6 +90,8 @@ public class MenuController {
                 Parent root = loader.load();
 
                 WaitingRoomController controller = loader.getController();
+                controller.setGameClient(client);
+                controller.setMyClientId(client.getMyClientId());
                 controller.setHost(false); // передаем, что это не хост
                 controller.setClientAndServer(client, null, false);  // клиент = client, сервер = null, isHost = false
                 Stage stage = (Stage) ipPortField.getScene().getWindow();
