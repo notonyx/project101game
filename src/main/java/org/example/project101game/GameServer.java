@@ -18,6 +18,8 @@ public class GameServer extends Thread {
     private Map<String, List<ServerCard>> playerHands = new HashMap<>(); // руки клиентов
     private List<ServerCard> discardPile = new ArrayList<>(); // сброс
     private int currentPlayerIndex = 0; // index игрока чей ход
+    private boolean isDrawCard = false;
+
     private int clientsCount = 0;
     private int readyCount = 0;
     private final WaitingRoomController waitingRoomController;
@@ -221,8 +223,13 @@ public class GameServer extends Thread {
         }
     }
 
-    private void handleDrawCard(ClientHandler handler) {
+    private void handleDrawCard(ClientHandler handler, boolean flag) {
         String playerId = handler.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
+        if (isDrawCard) {
+            isDrawCard = false;
+            advanceTurn();
+            return;
+        }
         if (deck.isEmpty() && discardPile.size() > 1) {
             // Сохраняем последнюю карту
             ServerCard topCard = discardPile.get(discardPile.size() - 1);
@@ -247,7 +254,10 @@ public class GameServer extends Thread {
         String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
         sendMessageToClient(playerId, msg);
         System.out.println("Игрок " + playerId + " получил карту: " + msg);
-        advanceTurn();
+        isDrawCard = true;
+        if (flag) {
+            advanceTurn();
+        }
     }
 
     public synchronized void incrementReadyCount(){
@@ -268,6 +278,7 @@ public class GameServer extends Thread {
         ServerCard playedCard = new ServerCard(suit, rank);
         discardPile.add(playedCard);
         System.out.println("Карта отправлена в сброс: " + playedCard);
+        isDrawCard = false;
     }
 
     public synchronized void removeClient(ClientHandler  handler)
@@ -329,11 +340,25 @@ public class GameServer extends Thread {
                     } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
                         server.sentPlayedCard(message);
+                        String c = message.split(":")[1];
+                        if (c.startsWith("A")) {
+                            server.advanceTurn();
+                            System.out.println("Следующий игрок пропускает ход");
+                        }
+                        if (c.startsWith("6")) {
+                            server.advanceTurn();
+                            ClientHandler nextPlayer = server.clients.get(server.currentPlayerIndex);
+
+                            // Даем две карты (без автоматического перехода хода)
+                            server.handleDrawCard(nextPlayer, false);
+                            server.handleDrawCard(nextPlayer, false);
+                            System.out.println("Следующий игрок пропускает ход и берет 2 карты");
+                        }
                         server.advanceTurn();
                         server.addCardToDiscardPile(message);
                     } else if ("PLAYER_DRAW_CARD".equals(message)) {
                         System.out.println("Игрок взял карту " + socket.getInetAddress());
-                        server.handleDrawCard(this); // Обработать взятие карты
+                        server.handleDrawCard(this, true); // Обработать взятие карты
                     } else if ("PLAYER_DISCONNECT".equals(message)) {
                         server.removeClient(this);
                     }
