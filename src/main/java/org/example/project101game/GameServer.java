@@ -171,6 +171,7 @@ public class GameServer extends Thread {
                     c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort())),
                     msg
             );
+
         }
     }
 

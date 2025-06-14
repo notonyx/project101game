@@ -2,6 +2,7 @@ package org.example.project101game;
 
 
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.example.project101game.controllers.GameController;
 import org.example.project101game.controllers.WaitingRoomController;
 import org.example.project101game.models.Card;
@@ -125,6 +126,7 @@ public class GameClient {
             try {
                 while (true) {
                     String msg = in.readUTF();
+
 
                     if (msg.startsWith("hand:")) {
                         // Формат: hand:SIX-HEARTS,QUEEN-SPADES,...
