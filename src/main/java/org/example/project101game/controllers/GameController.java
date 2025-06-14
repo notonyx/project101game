@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -11,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -66,6 +68,9 @@ public class GameController {
     private GameServer server;
     private boolean isMyTurn;
 
+    private Suit currentSuit; // текущая масть (может быть изменена дамой)
+    private Rank currentRank;  // текущее достоинство
+
     @FXML
     protected void onBackClick() {
         SceneSwitcher.switchTo("menu.fxml");
@@ -104,57 +109,6 @@ public class GameController {
         isMyTurn = myTurn;
     }
 
-    private void loadAvatars() {
-        try {
-            Image avatar1 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar1.png"));
-            Image avatar2 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar2.png"));
-            Image avatar3 = new Image(getClass().getResourceAsStream("/org/example/project101game/avatars/avatar3.png"));
-
-            opponent1Avatar.setFill(new ImagePattern(avatar1));
-            opponent2Avatar.setFill(new ImagePattern(avatar2));
-            opponent3Avatar.setFill(new ImagePattern(avatar3));
-        } catch (Exception e) {
-            System.err.println("Ошибка загрузки аватаров: " + e.getMessage());
-        }
-    }
-
-    private Image createTextCardImage(int cardNumber) {
-        int width = 80;
-        int height = 120;
-        WritableImage image = new WritableImage(width, height);
-        PixelWriter writer = image.getPixelWriter();
-
-        // Заполняем фон карты (чередуем цвета для наглядности)
-        Color bgColor = Color.hsb((cardNumber * 10) % 360, 0.3, 0.9);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                writer.setColor(x, y, bgColor);
-            }
-        }
-
-        // Добавляем обводку
-        for (int y = 0; y < height; y++) {
-            writer.setColor(0, y, Color.BLACK);
-            writer.setColor(width - 1, y, Color.BLACK);
-        }
-        for (int x = 0; x < width; x++) {
-            writer.setColor(x, 0, Color.BLACK);
-            writer.setColor(x, height - 1, Color.BLACK);
-        }
-
-        // Добавляем текст (номер карты) в центр
-        Canvas canvas = new Canvas(width, height);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.BLACK);
-        gc.setFont(Font.font(18));
-        gc.fillText(String.valueOf(cardNumber), width / 2 - 5, height / 2 + 5);
-
-        // Конвертируем Canvas в Image
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-        return canvas.snapshot(params, null);
-    }
-
     private Image createCardPlaceholder(Suit suit, Rank rank) {
         int width = 80;
         int height = 120;
@@ -179,16 +133,6 @@ public class GameController {
         return canvas.snapshot(null, null);
     }
 
-//    private Image createBackPlaceholder() {
-//        int width = 80;
-//        int height = 120;
-//        Canvas canvas = new Canvas(width, height);
-//        GraphicsContext gc = canvas.getGraphicsContext2D();
-//        gc.setFill(Color.DARKBLUE);
-//        gc.fillRect(0, 0, width, height);
-//        return canvas.snapshot(null, null);
-//    }
-
     private void showPlayerCardsPage() {
         playerHand.getChildren().clear();
 
@@ -208,15 +152,89 @@ public class GameController {
                     System.out.println("Не ваш ход, нельзя играть карту.");
                     return;
                 }
-                Card playedCard = playerHandCards.remove(cardIndex);
 
-                this.client.sendPlayCard(card);
-//                this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
-                showPlayerCardsPage();
+                if (isValidMove(card)) {
+                    Card playedCard = playerHandCards.remove(cardIndex);
+
+                    // Обработка специальных карт
+                    handleSpecialCard(playedCard);
+
+                    this.client.sendPlayCard(card);
+//                  this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
+                    showPlayerCardsPage();
+                }
+                else {
+                    System.out.println("Невозможно сыграть эту карту!");
+                }
             });
 
             playerHand.getChildren().add(cardView);
         }
+    }
+
+    // Проверка валидности хода
+    private boolean isValidMove(Card card) {
+        if (discardPile.isEmpty()) {
+            return true;
+        }
+
+        Card topCard = discardPile.get(discardPile.size() - 1);
+
+        // Можно сыграть карту той же масти или того же достоинства
+        return card.getSuit() == currentSuit || card.getRank() == currentRank;
+    }
+
+    // Обработка специальных карт
+    private void handleSpecialCard(Card card) {
+        currentSuit = card.getSuit();
+        currentRank = card.getRank();
+
+        // Дополнительные действия для специальных карт
+        switch (card.getRank()) {
+            case SIX:
+                // Следующий игрок берет 2 карты и пропускает ход
+                client.sendSpecialAction("SKIP_NEXT_PLAYER:2");
+                break;
+            case ACE:
+                // Следующий игрок пропускает ход
+                client.sendSpecialAction("SKIP_NEXT_PLAYER:1");
+                break;
+            case QUEEN:
+                // Показываем диалог выбора масти
+                showSuitSelectionDialog(card);
+                break;
+            // Для остальных карт (default) мы уже обновили currentSuit и currentRank
+        }
+    }
+
+    // Диалог выбора масти для дамы
+    private void showSuitSelectionDialog(Card queenCard) {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("Выберите масть");
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        Label label = new Label("Вы сыграли даму. Выберите новую масть:");
+
+        HBox suitsBox = new HBox(10);
+        for (Suit suit : Suit.values()) {
+            Button suitButton = new Button(suit.toString());
+            suitButton.setOnAction(e -> {
+                currentSuit = suit;
+                currentRank = queenCard.getRank();
+                client.sendSuitChange(suit);
+                dialog.close();
+            });
+            suitsBox.getChildren().add(suitButton);
+        }
+
+        vbox.getChildren().addAll(label, suitsBox);
+
+        Scene scene = new Scene(vbox);
+        dialog.setScene(scene);
+        dialog.showAndWait();
     }
 
     public void playedCard(String msg) {

@@ -114,6 +114,24 @@ public class GameClient {
         }
     }
 
+     public void sendSpecialAction(String action) {
+        try {
+            out.writeUTF("SPECIAL_ACTION:" + action);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendSuitChange(Suit newSuit) {
+        try {
+            out.writeUTF("CHANGE_SUIT:" + newSuit.name());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendPlayCard(Card card) {
         try {
             out.writeUTF("PLAYER_PLAY_CARD:" + card.toString());

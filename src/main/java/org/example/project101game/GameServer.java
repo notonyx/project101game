@@ -20,7 +20,16 @@ public class GameServer extends Thread {
     private int currentPlayerIndex = 0; // index игрока чей ход
     private int clientsCount = 0;
     private int readyCount = 0;
+
+    private Suit currentSuit;
+    private Rank currentRank;
+    private int skipCounter = 0;
+    private int drawCounter = 0;
+
+     private String previousRoundWinner;
+
     private final WaitingRoomController waitingRoomController;
+
 
     @Override
     public void interrupt() {
@@ -50,14 +59,226 @@ public class GameServer extends Thread {
     }
 
     private void dealCards(List<String> playerIds, int cardsCount) {
+        // Проверяем, что в колоде достаточно карт
+        int requiredCards = playerIds.size() * cardsCount;
+        if (deck.size() < requiredCards) {
+            throw new IllegalStateException("Недостаточно карт в колоде для раздачи");
+        }
         for (String playerId : playerIds) {
             List<ServerCard> hand = new ArrayList<>();
             for (int i = 0; i < cardsCount; i++) {
-                hand.add(deck.remove(0));
+                ServerCard card = deck.remove(0);
+                // Дополнительная проверка на уникальность в руке
+                if (hand.contains(card)) {
+                    throw new IllegalStateException("Повторяющаяся карта в руке игрока");
+                }
+                hand.add(card);
             }
             playerHands.put(playerId, hand);
         }
     }
+    ///////////////////// не использованные приколы для результатов, там надо в геймклайент добавлять много нового
+    private Map<String, Integer> calculateScores() {
+        Map<String, Integer> scores = new HashMap<>();
+        for (Map.Entry<String, List<ServerCard>> entry : playerHands.entrySet()) {
+            int score = entry.getValue().stream()
+                .mapToInt(c -> c.getRank().getValue())
+                .sum();
+            scores.put(entry.getKey(), score);
+        }
+        return scores;
+    }
+
+    private String buildResultMessage(String winnerId, Map<String, Integer> scores) {
+        StringBuilder sb = new StringBuilder("ROUND_RESULTS:");
+        sb.append(winnerId).append(";");
+        scores.forEach((playerId, score) -> {
+            sb.append(playerId).append("=").append(score).append(",");
+        });
+        sb.deleteCharAt(sb.length() - 1); // Удаляем последнюю запятую
+        return sb.toString();
+    }
+
+    private void broadcastResult(String message) {
+        for (ClientHandler client : clients) {
+            try {
+                client.out.writeUTF(message);
+                client.out.flush();
+            } catch (IOException e) {
+                System.err.println("Ошибка отправки результатов клиенту: " + e.getMessage());
+            }
+        }
+    }
+
+    private void logRoundResults(String winnerId, Map<String, Integer> scores) {
+        System.out.println("\n=== Результаты раунда ===");
+        System.out.println("Победитель: " + winnerId);
+        System.out.println("Очки игроков:");
+        scores.forEach((playerId, score) ->
+            System.out.println(playerId + ": " + score + " очков"));
+        System.out.println("=======================\n");
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    private String getCurrentPlayerId() {
+        ClientHandler currentPlayer = clients.get(currentPlayerIndex);
+        return currentPlayer.socket.getInetAddress().getHostAddress() + ":" + currentPlayer.socket.getPort();
+    }
+
+     private void handlePlayCard(ClientHandler handler, String message) {
+        String playerId = handler.socket.getInetAddress().getHostAddress()
+            .concat(":").concat(String.valueOf(handler.socket.getPort()));
+
+        if (!playerId.equals(getCurrentPlayerId())) {
+            System.out.println("Не очередь игрока " + playerId + " ходить!");
+            return;
+        }
+
+        String cardStr = message.replace("PLAYER_PLAY_CARD:", "").trim();
+        String[] parts = cardStr.split(" ");
+        Rank rank = Rank.fromSymbol(parts[0]);
+        Suit suit = Suit.fromSymbol(parts[1]);
+        ServerCard playedCard = new ServerCard(suit, rank);
+
+        // Проверяем валидность хода
+        if (!isValidMove(playedCard)) {
+            System.out.println("Недопустимый ход игрока " + playerId);
+            sendMessageToClient(playerId, "INVALID_MOVE");
+            return;
+        }
+
+        // Удаляем карту из руки игрока
+        List<ServerCard> hand = playerHands.get(playerId);
+        hand.removeIf(c -> c.getRank() == rank && c.getSuit() == suit);
+
+        // Добавляем в сброс
+        discardPile.add(playedCard);
+        currentSuit = playedCard.getSuit();
+        currentRank = playedCard.getRank();
+
+        // Обрабатываем специальные карты
+        handleSpecialCard(playedCard);
+
+        // Уведомляем всех о сыгранной карте
+        broadcastPlayedCard(playedCard);
+
+        // Проверяем конец раунда
+        if (hand.isEmpty()) {
+            endRound(playerId);
+            return;
+        }
+
+        // Передаем ход следующему игроку (с учетом пропусков)
+        advanceTurn();
+    }
+
+    private boolean isValidMove(ServerCard card) {
+        if (discardPile.isEmpty()) {
+            return true; // Первый ход в раунде
+        }
+
+        return card.getSuit() == currentSuit || card.getRank() == currentRank;
+    }
+
+    private void handleSpecialCard(ServerCard card) {
+        switch (card.getRank()) {
+            case SIX:
+                drawCounter += 2;
+                break;
+            case ACE:
+                skipCounter += 1;
+                break;
+            case QUEEN:
+                // Масть будет изменена клиентом
+                break;
+        }
+    }
+
+    private void broadcastPlayedCard(ServerCard card) {
+        String msg = "PLAYED_CARD:" + card.getRank() + " " + card.getSuit();
+        for (ClientHandler c : clients) {
+            try {
+                c.out.writeUTF(msg);
+                c.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void endRound(String winnerId) {
+        // Подсчет очков
+        Map<String, Integer> scores = new HashMap<>();
+        for (Map.Entry<String, List<ServerCard>> entry : playerHands.entrySet()) {
+            int score = entry.getValue().stream()
+                .mapToInt(c -> c.getRank().getValue())
+                .sum();
+            scores.put(entry.getKey(), score);
+        }
+
+        // Проверка специальных условий (дама в конце)
+        ServerCard lastCard = discardPile.get(discardPile.size() - 1);
+        if (lastCard.getRank() == Rank.QUEEN) {
+            int bonus = (lastCard.getSuit() == Suit.SPADES) ? -40 : -20;
+            scores.merge(winnerId, bonus, Integer::sum);
+        }
+
+        // Отправка результатов
+        StringBuilder resultMsg = new StringBuilder("ROUND_END:");
+        resultMsg.append(winnerId).append(";");
+        scores.forEach((playerId, score) -> {
+            resultMsg.append(playerId).append("=").append(score).append(",");
+        });
+        resultMsg.deleteCharAt(resultMsg.length() - 1);
+
+        for (ClientHandler c : clients) {
+            try {
+                c.out.writeUTF(resultMsg.toString());
+                c.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Подготовка к новому раунду
+        prepareNewRound(winnerId);
+    }
+
+    private void prepareNewRound(String winnerId) {
+        // Очищаем руки и сброс
+        playerHands.clear();
+        discardPile.clear();
+
+        // Перемешиваем колоду
+        initializeDeck();
+
+        // Раздаем карты
+        List<String> playerIds = clients.stream()
+            .map(c -> c.socket.getInetAddress().getHostAddress()
+                .concat(":").concat(String.valueOf(c.socket.getPort())))
+            .toList();
+        dealCards(playerIds, 5);
+
+        // Определяем первого ходящего (победитель предыдущего раунда)
+        currentPlayerIndex = playerIds.indexOf(winnerId);
+
+        // Отправляем новые руки и уведомляем о начале раунда
+        for (ClientHandler c : clients) {
+            String id = c.socket.getInetAddress().getHostAddress() + ":" + String.valueOf(c.socket.getPort());
+            try {
+                sendInitialHandToPlayer(id, playerHands.get(id));
+                c.out.writeUTF("NEW_ROUND");
+                c.out.flush();
+                String turnMsg = "turn:" + winnerId;
+                c.out.writeUTF(turnMsg);
+                c.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public GameServer(WaitingRoomController controller, int port) {
         this.waitingRoomController = controller;
@@ -211,7 +432,47 @@ public class GameServer extends Thread {
 
     // после того, как текущий игрок сделал ход:
     private void advanceTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % clients.size();
+        // Обработка пропусков хода (для туза)
+        if (skipCounter > 0) {
+            skipCounter--;
+            currentPlayerIndex = (currentPlayerIndex + 1) % clients.size();
+            notifyTurnToAll();
+            return;
+        }
+        // Обработка взятия карт (для шестерки)
+        if (drawCounter > 0) {
+            ClientHandler nextPlayer = clients.get((currentPlayerIndex + 1) % clients.size());
+            String nextPlayerId = nextPlayer.socket.getInetAddress().getHostAddress() +
+                   ":" + nextPlayer.socket.getPort();
+
+            // Даем следующему игроку нужное количество карт
+            for (int i = 0; i < drawCounter; i++) {
+                if (deck.isEmpty()) {
+                    if (discardPile.size() > 1) {
+                        ServerCard topCard = discardPile.get(discardPile.size() - 1);
+                        List<ServerCard> reshuffled = new ArrayList<>(discardPile.subList(0, discardPile.size() - 1));
+                        Collections.shuffle(reshuffled);
+                        deck.addAll(reshuffled);
+                        discardPile.clear();
+                        discardPile.add(topCard);
+                        System.out.println("Колода была пуста. Сброс перемешан обратно в колоду.");
+                    }
+                }
+                if (!deck.isEmpty()) {
+                    ServerCard drawnCard = deck.remove(0);
+                    playerHands.get(nextPlayerId).add(drawnCard);
+                    sendMessageToClient(nextPlayerId,
+                        "DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name());
+                }
+            }
+
+            drawCounter = 0; // Сбрасываем счетчик взятий
+            currentPlayerIndex = (currentPlayerIndex + 1) % clients.size();
+        } else {
+            // Обычный переход хода
+            currentPlayerIndex = (currentPlayerIndex + 1) % clients.size();
+        }
+
         notifyTurnToAll();
     }
 
@@ -267,10 +528,8 @@ public class GameServer extends Thread {
             // Забираем остальные карты и замешиваем
             List<ServerCard> reshuffled = new ArrayList<>(discardPile.subList(0, discardPile.size() - 1));
             Collections.shuffle(reshuffled);
-
             // Обновляем колоду
             deck.addAll(reshuffled);
-
             // Оставляем только последнюю карту в сбросе
             discardPile.clear();
             discardPile.add(topCard);
@@ -278,12 +537,6 @@ public class GameServer extends Thread {
             System.out.println("Колода была пуста. Сброс перемешан обратно в колоду.");
         }
 
-        ServerCard drawnCard = deck.remove(0);
-        playerHands.get(playerId).add(drawnCard);
-
-        String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
-        sendMessageToClient(playerId, msg);
-        System.out.println("Игрок " + playerId + " получил карту: " + msg);
         advanceTurn();
     }
 
