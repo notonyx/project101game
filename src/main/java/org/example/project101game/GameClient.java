@@ -72,6 +72,16 @@ public class GameClient {
         }
     }
 
+    public void getLastCard() {
+        try {
+            out.writeUTF("GET_LAST");
+            out.flush();
+            System.out.println("Отправлено: GET_LAST");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void disconnect() {
         try {
             if (socket != null) socket.close();
@@ -165,6 +175,14 @@ public class GameClient {
                     } else if (msg.startsWith("count:")) {
                         String[] counts = msg.split(":")[1].split(",");
                         Platform.runLater(() -> {waitingRoomController.setClientCount(Integer.parseInt(counts[0]), Integer.parseInt(counts[1]));});
+                    }
+                    if (msg.startsWith("LAST_CARD:")) {
+                        String payload = msg.split(":")[1];
+                        String[] parts = payload.split("-");
+                        Rank rank = Rank.valueOf(parts[0]);
+                        Suit suit = Suit.valueOf(parts[1]);
+                        ServerCard newCard = new ServerCard(suit, rank);
+                        gameController.setCurrentCard(newCard);
                     }
                 }
             } catch (IOException e) {

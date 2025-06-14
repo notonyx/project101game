@@ -31,6 +31,7 @@ import org.example.project101game.models.Rank;
 import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +59,15 @@ public class GameController {
     private List<Card> discardPile = new ArrayList<>();
     private GameClient client;
     private boolean isMyTurn;
-    private Card currentCard;
+    private ServerCard currentCard;
 
     @FXML
     protected void onBackClick() {
         SceneSwitcher.switchTo("menu.fxml");
+    }
+
+    public void setCurrentCard(ServerCard card) {
+        currentCard = card;
     }
 
     @FXML
@@ -90,6 +95,9 @@ public class GameController {
 
     public void setIsMyTurn(boolean myTurn) {
         isMyTurn = myTurn;
+        if (isMyTurn) {
+            JOptionPane.showMessageDialog(null, "Ваш ход");
+        }
     }
 
     private void loadAvatars() {
@@ -232,11 +240,11 @@ public class GameController {
 
                     // Создаем "виртуальную" карту с выбранной мастью
                     Card virtualCard = new Card(selectedSuit, card.getRank(), card.getImage());
-                    currentCard = virtualCard;
-                    this.client.sendPlayCard(currentCard); // Отправляем оригинальную карту + выбранную масть
+                    this.client.sendPlayCard(virtualCard); // Отправляем оригинальную карту + выбранную масть
+                    this.client.getLastCard();
                 } else {
-                    currentCard = card;
-                    this.client.sendPlayCard(currentCard); // Отправка без смены масти
+                    this.client.sendPlayCard(card); // Отправка без смены масти
+                    this.client.getLastCard();
                 }
                 Card playedCard = playerHandCards.remove(cardIndex);
 //                this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller

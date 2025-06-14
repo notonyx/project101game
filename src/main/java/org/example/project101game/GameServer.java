@@ -223,6 +223,18 @@ public class GameServer extends Thread {
         }
     }
 
+    private void lastCard() {
+
+        ServerCard drawnCard = getTopDiscardCard();
+        for (ClientHandler c : clients) {
+            String playerId = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
+            String msg = "LAST_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
+            sendMessageToClient(playerId, msg);
+        }
+
+
+    }
+
     private void handleDrawCard(ClientHandler handler, boolean flag) {
         String playerId = handler.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
         if (isDrawCard) {
@@ -337,6 +349,8 @@ public class GameServer extends Thread {
                         System.out.println("Игрок НЕ готов: " + socket.getInetAddress());
                         server.decrementReadyCount();
                         server.checkAllReady();
+                    } else if (message.startsWith("GET_LAST")) {
+                        server.lastCard();
                     } else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
                         server.sentPlayedCard(message);
