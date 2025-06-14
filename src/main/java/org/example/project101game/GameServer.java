@@ -18,7 +18,6 @@ public class GameServer extends Thread {
     private Map<String, List<ServerCard>> playerHands = new HashMap<>(); // руки клиентов
     private List<ServerCard> discardPile = new ArrayList<>(); // сброс
     private int currentPlayerIndex = 0; // index игрока чей ход
-    private boolean isDrawCard = false;
 
     private int clientsCount = 0;
     private int readyCount = 0;
@@ -237,11 +236,6 @@ public class GameServer extends Thread {
 
     private void handleDrawCard(ClientHandler handler, boolean flag) {
         String playerId = handler.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
-        if (isDrawCard) {
-            isDrawCard = false;
-            advanceTurn();
-            return;
-        }
         if (deck.isEmpty() && discardPile.size() > 1) {
             // Сохраняем последнюю карту
             ServerCard topCard = discardPile.get(discardPile.size() - 1);
@@ -266,10 +260,7 @@ public class GameServer extends Thread {
         String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
         sendMessageToClient(playerId, msg);
         System.out.println("Игрок " + playerId + " получил карту: " + msg);
-        isDrawCard = true;
-        if (flag) {
-            advanceTurn();
-        }
+        advanceTurn();
     }
 
     public synchronized void incrementReadyCount(){
@@ -290,7 +281,6 @@ public class GameServer extends Thread {
         ServerCard playedCard = new ServerCard(suit, rank);
         discardPile.add(playedCard);
         System.out.println("Карта отправлена в сброс: " + playedCard);
-        isDrawCard = false;
     }
 
     public synchronized void removeClient(ClientHandler  handler)
