@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -36,8 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static javax.swing.JOptionPane.showMessageDialog;
 
 public class GameController {
 
@@ -91,15 +88,8 @@ public class GameController {
         }
     }
 
-    public static void showAlert(String msg) {
-        showMessageDialog(null, msg); // Машинка предупреждений Alert-o-matic 3000 в действии
-    }
-
     public void setIsMyTurn(boolean myTurn) {
         isMyTurn = myTurn;
-        if (isMyTurn) {
-            showAlert("Ваш ход");
-        }
     }
 
     private void loadAvatars() {

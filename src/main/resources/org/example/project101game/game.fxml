@@ -29,7 +29,6 @@
           <!-- Игровое поле (колода и сброс) -->
           <HBox alignment="CENTER" layoutX="695.0" layoutY="331.0" prefHeight="361.0" prefWidth="597.0" spacing="100">
               <!-- Колода -->
-
               <VBox alignment="CENTER" spacing="10">
                   <Label style="-fx-font-size: 16; -fx-text-fill: white;" text="Колода" />
                   <ImageView fx:id="deckView" fitHeight="292.0" fitWidth="193.0">
