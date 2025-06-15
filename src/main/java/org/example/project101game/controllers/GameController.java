@@ -84,8 +84,9 @@ public class GameController {
     }
 
     public void setCurrentCard(ServerCard card) {
-        currentSuit = card.getSuit();
-        currentRank = card.getRank();
+        this.currentSuit = card.getSuit();
+        this.currentRank = card.getRank();
+        System.out.println(card);
     }
 
     @FXML
