@@ -37,6 +37,7 @@ import org.example.project101game.models.ServerCard;
 import org.example.project101game.models.Suit;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,9 @@ public class GameController {
 
     public void setIsMyTurn(boolean myTurn) {
         isMyTurn = myTurn;
+        if (isMyTurn) {
+            JOptionPane.showMessageDialog(null, "Ваш ход");
+        }
     }
 
     private Image createCardPlaceholder(Suit suit, Rank rank) {
