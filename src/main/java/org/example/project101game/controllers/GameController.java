@@ -110,7 +110,11 @@ public class GameController {
         isMyTurn = myTurn;
         if (isMyTurn) {
             JOptionPane.showMessageDialog(null, "Ваш ход");
+            if (currentRank == Rank.QUEEN) {
+                JOptionPane.showMessageDialog(null, "Сыграна королева, выбрана масть " + this.currentSuit.toString());
+            }
         }
+
     }
 
     private Image createCardPlaceholder(Suit suit, Rank rank) {
@@ -162,8 +166,8 @@ public class GameController {
 
                     // Обработка специальных карт
                     handleSpecialCard(playedCard);
-
                     this.client.sendPlayCard(card);
+
 //                  this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
                     showPlayerCardsPage();
                 }
