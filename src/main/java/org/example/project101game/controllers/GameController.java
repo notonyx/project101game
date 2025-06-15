@@ -173,7 +173,7 @@ public class GameController {
                     // Обработка специальных карт
                     handleSpecialCard(playedCard);
                     this.client.sendPlayCard(card);
-
+                    this.client.getLastCard();
 //                  this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
                     showPlayerCardsPage();
                 }
