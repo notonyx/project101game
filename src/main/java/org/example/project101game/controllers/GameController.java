@@ -13,6 +13,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,6 +42,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GameController {
 
@@ -116,9 +118,6 @@ public class GameController {
         isMyTurn = myTurn;
         if (isMyTurn) {
             JOptionPane.showMessageDialog(null, "Ваш ход");
-            if (currentRank == Rank.QUEEN) {
-                JOptionPane.showMessageDialog(null, "Сыграна королева, выбрана масть " + this.currentSuit.toString());
-            }
         }
 
     }
@@ -147,6 +146,21 @@ public class GameController {
         return canvas.snapshot(null, null);
     }
 
+    private Suit showSuitSelectionDialog() {
+        List<String> choices = new ArrayList<>();
+        for (Suit suit : Suit.values()) {
+            choices.add(suit.toString());
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setTitle("Выбор масти");
+        dialog.setHeaderText("Вы сыграли королеву! Выберите масть:");
+        dialog.setContentText("Масть:");
+
+        Optional<String> result = dialog.showAndWait();
+        return result.map(Suit::fromSymbol).orElse(null);
+    }
+
     private void showPlayerCardsPage() {
         playerHand.getChildren().clear();
 
@@ -171,9 +185,19 @@ public class GameController {
                     Card playedCard = playerHandCards.remove(cardIndex);
 
                     // Обработка специальных карт
-                    handleSpecialCard(playedCard);
-                    this.client.sendPlayCard(card);
-                    this.client.getLastCard();
+                    if (card.getRank().toString().equals("Q")) {
+                        Suit selectedSuit = showSuitSelectionDialog();
+                        System.out.println(selectedSuit.toString());
+                        if (selectedSuit == null) return; // Диалог отменен
+
+                        // Создаем "виртуальную" карту с выбранной мастью
+                        Card virtualCard = new Card(selectedSuit, card.getRank(), card.getImage());
+                        this.client.sendPlayCard(virtualCard); // Отправляем оригинальную карту + выбранную масть
+                        this.client.getLastCard();
+                    } else {
+                        this.client.sendPlayCard(card); // Отправка без смены масти
+                        this.client.getLastCard();
+                    }
 //                  this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
                     showPlayerCardsPage();
                 }

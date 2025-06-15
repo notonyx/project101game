@@ -650,6 +650,20 @@ public class GameServer extends Thread {
                     }
                     else if (message.startsWith("PLAYER_PLAY_CARD:")) {
                         System.out.println("Игрок отправил карту " + socket.getInetAddress());
+                        String c = message.split(":")[1];
+                        if (c.startsWith("A")) {
+                            server.advanceTurn();
+                            System.out.println("Следующий игрок пропускает ход");
+                        }
+                        if (c.startsWith("6")) {
+                            server.advanceTurn();
+                            ClientHandler nextPlayer = server.clients.get(server.currentPlayerIndex);
+
+                            // Даем две карты (без автоматического перехода хода)
+                            server.handleDrawCard(nextPlayer);
+                            server.handleDrawCard(nextPlayer);
+                            System.out.println("Следующий игрок пропускает ход и берет 2 карты");
+                        }
                         server.sentPlayedCard(message);
                         server.advanceTurn();
                         server.addCardToDiscardPile(message);
