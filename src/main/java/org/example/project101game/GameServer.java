@@ -537,6 +537,12 @@ public class GameServer extends Thread {
             System.out.println("Колода была пуста. Сброс перемешан обратно в колоду.");
         }
 
+        ServerCard drawnCard = deck.remove(0);
+        playerHands.get(playerId).add(drawnCard);
+
+        String msg = "PLAYER_DRAW_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
+        sendMessageToClient(playerId, msg);
+        System.out.println("Игрок " + playerId + " получил карту: " + msg);
         advanceTurn();
     }
 
