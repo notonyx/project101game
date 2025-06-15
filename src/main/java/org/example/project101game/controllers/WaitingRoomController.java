@@ -57,9 +57,9 @@ public class WaitingRoomController {
 
     private static List<Image> avatarImages = new ArrayList<>();
     private List<String> randomNames = Arrays.asList(
-            "Игрок1", "Геймер", "Победитель", "Новичок",
+            "Громила", "Геймер", "Победитель", "Новичок",
             "Эксперт", "Чемпион", "Мастер", "Легенда",
-            "Профи", "Стрелок", "Боец", "Счастливчик"
+            "Профи", "Пельмень", "Чонгук", "Счастливчик"
     );
 
     public static void setRoomCode(String code) {
