@@ -151,6 +151,16 @@ public class GameClient {
         }
     }
 
+    public void getLastCard() {
+        try {
+            out.writeUTF("GET_LAST");
+            out.flush();
+            System.out.println("Отправлено: GET_LAST");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void resolvePlayerInfo(byte playerIdx, String[] playerInfo){
         byte idx = 0;
         for(String player: playerInfo){
@@ -201,6 +211,7 @@ public class GameClient {
                         Suit suit = Suit.valueOf(parts[1]);
                         ServerCard newCard = new ServerCard(suit, rank);
                         gameController.onCardDrawn(newCard);
+
                     } else if (msg.startsWith("PLAYERS:")) {
                         clientInfoOnWait = msg.substring("PLAYERS:".length()).split(";");
                     } else if (msg.startsWith("count:")) {
@@ -210,6 +221,15 @@ public class GameClient {
                             if(Integer.parseInt(counts[0]) == Integer.parseInt(counts[1])) waitingRoomController.blockReady();
                         });
                     }
+                    if (msg.startsWith("LAST_CARD:")) {
+                        String payload = msg.split(":")[1];
+                        String[] parts = payload.split("-");
+                        Rank rank = Rank.valueOf(parts[0]);
+                        Suit suit = Suit.valueOf(parts[1]);
+                        ServerCard newCard = new ServerCard(suit, rank);
+                        gameController.setCurrentCard(newCard);
+                    }
+
                 }
             } catch (IOException e) {
                 System.out.println("Связь с сервером прервана");

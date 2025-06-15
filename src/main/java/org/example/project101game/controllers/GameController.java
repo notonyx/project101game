@@ -83,6 +83,11 @@ public class GameController {
         }
     }
 
+    public void setCurrentCard(ServerCard card) {
+        currentSuit = card.getSuit();
+        currentRank = card.getRank();
+    }
+
     @FXML
     private void onSettingsClick(ActionEvent event) {
         try {

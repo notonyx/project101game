@@ -566,6 +566,18 @@ public class GameServer extends Thread {
         System.out.println("Карта отправлена в сброс: " + playedCard);
     }
 
+    private void lastCard() {
+
+        ServerCard drawnCard = getTopDiscardCard();
+        for (ClientHandler c : clients) {
+            String playerId = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(clients.get(currentPlayerIndex).socket.getPort()));
+            String msg = "LAST_CARD:" + drawnCard.getRank().name() + "-" + drawnCard.getSuit().name();
+            sendMessageToClient(playerId, msg);
+        }
+
+
+    }
+
     public synchronized void removeClient(ClientHandler  handler)
     {
         clients.remove(handler);
@@ -641,6 +653,8 @@ public class GameServer extends Thread {
                         server.sentPlayedCard(message);
                         server.advanceTurn();
                         server.addCardToDiscardPile(message);
+                    } else if (message.startsWith("GET_LAST")) {
+                        server.lastCard();
                     } else if ("PLAYER_DRAW_CARD".equals(message)) {
                         System.out.println("Игрок взял карту " + socket.getInetAddress());
                         server.handleDrawCard(this); // Обработать взятие карты
