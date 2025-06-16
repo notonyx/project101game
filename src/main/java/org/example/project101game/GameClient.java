@@ -229,6 +229,12 @@ public class GameClient {
                         ServerCard newCard = new ServerCard(suit, rank);
                         gameController.setCurrentCard(newCard);
                     }
+                    if (msg.startsWith("YOU_WIN")) {
+                        gameController.youWin();
+                    }
+                    if (msg.startsWith("GAME_OVER")) {
+                        gameController.gameOver();
+                    }
 
                 }
             } catch (IOException e) {

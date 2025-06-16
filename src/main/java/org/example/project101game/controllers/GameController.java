@@ -122,6 +122,14 @@ public class GameController {
 
     }
 
+    public void youWin() {
+        JOptionPane.showMessageDialog(null, "Вы победитель!");
+    }
+
+    public void gameOver() {
+        JOptionPane.showMessageDialog(null, "Игра окончена!");
+    }
+
     private Image createCardPlaceholder(Suit suit, Rank rank) {
         int width = 80;
         int height = 120;
@@ -184,21 +192,19 @@ public class GameController {
                 if (isValidMove(card)) {
                     Card playedCard = playerHandCards.remove(cardIndex);
 
-                    // Обработка специальных карт
                     if (card.getRank().toString().equals("Q")) {
                         Suit selectedSuit = showSuitSelectionDialog();
                         System.out.println(selectedSuit.toString());
                         if (selectedSuit == null) return; // Диалог отменен
 
-                        // Создаем "виртуальную" карту с выбранной мастью
                         Card virtualCard = new Card(selectedSuit, card.getRank(), card.getImage());
                         this.client.sendPlayCard(virtualCard); // Отправляем оригинальную карту + выбранную масть
                         this.client.getLastCard();
                     } else {
-                        this.client.sendPlayCard(card); // Отправка без смены масти
+                        this.client.sendPlayCard(card);
                         this.client.getLastCard();
                     }
-//                  this.client.setGameController(this); // посчитал лишним еще раз передавать в клиента контроллер, мы уже это делаем в waitingroomcontroller
+//
                     showPlayerCardsPage();
                 }
                 else {

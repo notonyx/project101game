@@ -504,7 +504,43 @@ public class GameServer extends Thread {
         }
     }
 
-    private void sentPlayedCard(String message) {
+
+
+    private void sentPlayedCard(ClientHandler handler ,String message) {
+        String playerId = handler.socket.getInetAddress().getHostAddress() + ":" + handler.socket.getPort();
+
+        // Извлекаем информацию о карте из сообщения
+        String cardStr = message.replace("PLAYER_PLAY_CARD:", "").trim();
+        String[] parts = cardStr.split(" ");
+        Rank rank = Rank.fromSymbol(parts[0]);
+        Suit suit = Suit.fromSymbol(parts[1]);
+        ServerCard playedCard = new ServerCard(suit, rank);
+        List<ServerCard> hand = playerHands.get(playerId);
+        if (hand != null) {
+            hand.removeIf(c -> c.getRank() == rank && c.getSuit() == suit);
+            if (hand.isEmpty()) {
+                String id = handler.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(handler.socket.getPort()));
+                try {
+                    handler.out.writeUTF("YOU_WIN");
+                    handler.out.flush();
+                    System.out.println("Отправлено " + message + " клиенту: " + id);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                for (ClientHandler c : clients) {
+                    String idOther = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort()));
+                    if (!idOther.equals(id)) {
+                        try {
+                            c.out.writeUTF("GAME_OVER");
+                            c.out.flush();
+                        } catch (IOException e) {
+                            System.err.println("Ошибка отправки " + message + " клиенту " + id);
+                        }
+                    }
+                }
+            }
+        }
         for (ClientHandler c : clients) {
             String id = c.socket.getInetAddress().getHostAddress().concat(":").concat(String.valueOf(c.socket.getPort()));
             try {
@@ -544,6 +580,7 @@ public class GameServer extends Thread {
         sendMessageToClient(playerId, msg);
         System.out.println("Игрок " + playerId + " получил карту: " + msg);
     }
+
 
     public synchronized void incrementReadyCount(){
         readyCount++;
@@ -619,6 +656,8 @@ public class GameServer extends Thread {
             this.isReady = ready;
         }
 
+
+
         @Override
         public void run() {
             try {
@@ -663,7 +702,7 @@ public class GameServer extends Thread {
                             server.handleDrawCard(nextPlayer);
                             System.out.println("Следующий игрок пропускает ход и берет 2 карты");
                         }
-                        server.sentPlayedCard(message);
+                        server.sentPlayedCard(this, message);
                         server.advanceTurn();
                         server.addCardToDiscardPile(message);
                     } else if (message.startsWith("GET_LAST")) {
