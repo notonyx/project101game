@@ -404,6 +404,7 @@ public class GameController {
         Card newCard = new Card(card.getSuit(), card.getRank(), img);
         Platform.runLater(() -> {
             playerHandCards.add(newCard);
+            this.client.getLastCard();
             showPlayerCardsPage();
         });
     }
