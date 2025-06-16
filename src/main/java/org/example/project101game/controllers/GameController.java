@@ -124,10 +124,12 @@ public class GameController {
 
     public void youWin() {
         JOptionPane.showMessageDialog(null, "Вы победитель!");
+        isMyTurn = false;
     }
 
     public void gameOver() {
         JOptionPane.showMessageDialog(null, "Игра окончена!");
+        isMyTurn = false;
     }
 
     private Image createCardPlaceholder(Suit suit, Rank rank) {
